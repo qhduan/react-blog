@@ -35,12 +35,13 @@ if (process.env.NODE_ENV !== "production") {
   }));
 }
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: "2mb" }));
+app.use(bodyParser.urlencoded({ extended: false, limit: "2mb" }));
 app.use(compression());
 app.use(express.static(path.join(__dirname, "database")));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/article", require("./routes/article"));
+app.use("/upload", require("./routes/upload"));
 
 // 404 服务
 app.use((req, res, next) => {

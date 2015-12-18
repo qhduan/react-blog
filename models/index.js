@@ -57,9 +57,14 @@ function readDatabase () {
   return result;
 }
 
-class AA {
-
-};
+function exists (path) {
+  try {
+    fs.accessSync(path);
+    return true;
+  } catch (path) {
+    return false;
+  }
+}
 
 
 module.exports = {
@@ -110,15 +115,6 @@ module.exports = {
       if (r.length < 2) r = "0" + r;
       return r;
     }
-
-    let exists = (p) => {
-      try {
-        fs.accessSync(p);
-        return true;
-      } catch (e) {
-        return false;
-      }
-    };
 
     let id = null;
     let path = null;
@@ -174,6 +170,34 @@ module.exports = {
     } catch (e) {
       return false;
     }
+  },
+
+  upload: function (name, date, file) {
+
+    let m = date.match(/^(\d{4})-([0-1]\d)-([0-3]\d) ([0-2]\d):([0-5]\d):([0-5]\d)$/);
+    let year = m[1];
+    let month = m[2];
+    
+    existsOrMkdir("./database");
+    existsOrMkdir("./database/uploads");
+    existsOrMkdir(`./database/uploads/${year}`);
+    existsOrMkdir(`./database/uploads/${year}/${month}`);
+
+    let path = `./database/uploads/${year}/${month}/${name}`;
+
+    if ( exists(path) ) {
+      return false;
+    }
+
+    let buf = new Buffer(file, "base64");
+
+    try {
+      fs.writeFileSync(path, buf);
+      return path.substr(10); // 10 = length of "./database"
+    } catch (e) {
+      return false;
+    }
+
   }
 
 };

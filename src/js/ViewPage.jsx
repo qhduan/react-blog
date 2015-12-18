@@ -90,33 +90,38 @@ export default class ViewPage extends React.Component {
 
               <Row>
                 <Col xs={12}>
-                  <PageHeader>
-                    <a href="/#">
-                      >>
-                    </a>
-                    <a href={ "/#view/" + this.state.id }>
-                      { this.state.title }
-                    </a>
-                  </PageHeader>
+                  <header>
+                    <PageHeader>
+                      <a href="/#">
+                        >>
+                      </a>
+                      <a href={ "/#view/" + this.state.id }>
+                        { this.state.title }
+                      </a>
+                    </PageHeader>
+                  </header>
                 </Col>
               </Row>
               <Row>
                 <Col xs={12}>
-                  <div dangerouslySetInnerHTML={ { __html: this.state.content } }></div>
+                  <Panel>
+                    <article dangerouslySetInnerHTML={ { __html: this.state.content } }></article>
+                  </Panel>
                 </Col>
               </Row>
               <Row>
                 <Col className="footer" xs={12}>
-                  <hr />
-                  <span>{ this.state.category }</span>
-                  <br />
-                  <span>{ this.state.date }</span>
-                  <br />
-                  <a href={ "/#update/" + this.state.id }>Edit</a>
-                  &nbsp;
-                  <a href="/#create">Create</a>
-                  &nbsp;
-                  <a href="" onClick={ this.remove.bind(this) } >Remove</a>
+                  <footer>
+                    <span>{ this.state.category }</span>
+                    <br />
+                    <span>{ this.state.date }</span>
+                    <br />
+                    <a href={ "/#update/" + this.state.id }>Edit</a>
+                    &nbsp;
+                    <a href="/#create">Create</a>
+                    &nbsp;
+                    <a href="" onClick={ this.remove.bind(this) } >Remove</a>
+                  </footer>
                 </Col>
               </Row>
 

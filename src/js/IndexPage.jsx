@@ -162,9 +162,11 @@ export default class IndexPage extends React.Component {
 
               <Row>
                 <Col xs={12}>
-                  <PageHeader>
-                    <a href="/#">{ this.state.title }</a>
-                  </PageHeader>
+                  <header>
+                    <PageHeader>
+                      <a href="/#">{ this.state.title }</a>
+                    </PageHeader>
+                  </header>
                 </Col>
               </Row>
               <Row>
@@ -189,8 +191,10 @@ export default class IndexPage extends React.Component {
 
               <Row>
                 <Col className="footer" xs={12}>
-                  <hr />
-                  <a href="/#create">Create</a>
+                  <footer>
+                    <hr />
+                    <a href="/#create">Create</a>
+                  </footer>
                 </Col>
               </Row>
 

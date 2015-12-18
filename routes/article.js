@@ -8,6 +8,9 @@ let config =  require("../config");
 
 let router = express.Router();
 
+/*
+ * 创建新文章
+ */
 router.post("/create", (req, res, next) => {
   let data = secret.decode(req.body.data, config.password);
   if ( !data ) return res.json({ message: "Invalid password" });
@@ -30,7 +33,9 @@ router.post("/create", (req, res, next) => {
   }
   res.json({ success: "created" });
 });
-
+/*
+ * 修改文章
+ */
 router.post("/update", (req, res, next) => {
   let data = secret.decode(req.body.data, config.password);
   if ( !data ) return res.json({ message: "Invalid password" });
@@ -57,7 +62,9 @@ router.post("/update", (req, res, next) => {
   }
   res.json({ success: "updated" });
 });
-
+/*
+ * 删除文章
+ */
 router.post("/remove", (req, res, next) => {
   let data = secret.decode(req.body.data, config.password);
   if ( !data ) return res.json({ message: "Invalid password" });

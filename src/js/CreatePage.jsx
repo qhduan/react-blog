@@ -9,8 +9,7 @@ import secret   from "../../models/secret";
 
 import "../css/CreatePage.scss";
 
-
-import { Grid, Row, Col, PageHeader, Panel, Input, ButtonInput } from "react-bootstrap";
+import { Grid, Row, Col, PageHeader, Panel, Input, ButtonInput, Button, Alert } from "react-bootstrap";
 
 
 export default class CreatePage extends React.Component {
@@ -25,7 +24,9 @@ export default class CreatePage extends React.Component {
       category: "",
       content:  "",
       view:     "",
-      password: ""
+      password: "",
+      file:     null,
+      message:  ""
     };
 
     document.querySelector("title").textContent = "Create";
@@ -59,6 +60,53 @@ export default class CreatePage extends React.Component {
     this.setState({ password: e.target.value });
   }
 
+  updateFile(e) {
+    this.setState({ file: e.target.files[0] });
+  }
+
+  hideAlert (e) {
+    this.setState({ message: "" });
+  }
+
+  upload (e) {
+    if ( !this.state.file ) {
+      this.setState({
+        message: "No file selected"
+      });
+    } else {
+      let name = this.state.file.name;
+      let reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result && reader.result.length && reader.result.match(/base64,/)) {
+          let pos = reader.result.indexOf("base64,");
+          let data = reader.result.substr(pos + 7);
+          $.post("/upload", {
+            data: secret.encode({
+              name: name,
+              file: data,
+              date: this.state.date
+            }, this.state.password)
+          }).done((result) => {
+            if (result.success) {
+              alert("uploaded " + result.success);
+              this.setState({
+                content: this.state.content + "\n\n" + result.success
+              });
+            } else {
+              // alert(result.message || "Unknown Error");
+              this.setState({
+                message: result.message || "Unknown Error"
+              });
+            }
+          }).fail(() => {
+            alert("ajax error");
+          });
+        }
+      };
+      reader.readAsDataURL(this.state.file)
+    }
+  }
+
   submit () {
     let data = {
       title:    this.state.title,
@@ -75,7 +123,10 @@ export default class CreatePage extends React.Component {
         alert(result.success);
         window.location.href = "/#";
       } else {
-        alert(result.message || "Unknown Error");
+        // alert(result.message || "Unknown Error");
+        this.setState({
+          message: result.message || "Unknown Error"
+        });
       }
     }).fail(() => {
       alert("ajax error");
@@ -104,7 +155,7 @@ export default class CreatePage extends React.Component {
 
               <Row>
                 <Col xs={12}>
-                  <form>
+                  <Panel>
                     <Input type="text" label="Title" placeholder="Enter title" onChange={ this.updateTitle.bind(this) } />
                     <Input type="select" label="Type" placeholder="Type" onChange={ this.updateType.bind(this) } >
                       <option value="post">Post</option>
@@ -112,13 +163,27 @@ export default class CreatePage extends React.Component {
                     </Input>
                     <Input type="text" label="Date" value={ this.state.date } onChange={ this.updateDate.bind(this) } readOnly />
                     <Input type="text" label="Category" placeholder="Enter category" onChange={ this.updateCategory.bind(this) } />
-                    <Input className="content" type="textarea" label="Content" placeholder="Enter content" onChange={ this.updateContent.bind(this) } />
+                    <Input className="content" type="textarea" label="Content" placeholder="Enter content" value={ this.state.content } onChange={ this.updateContent.bind(this) } />
                     <Panel>
                       <div className="view" dangerouslySetInnerHTML={ { __html: this.state.view } }></div>
                     </Panel>
                     <Input type="password" label="Password" onChange={ this.updatePassword.bind(this) } />
-                    <ButtonInput value="Submit" onClick={ this.submit.bind(this) } />
-                  </form>
+
+                    <Alert style={ this.state.message.length ? {} : { display: "none" } } bsStyle="danger">
+                      <p>
+                        { this.state.message }
+                      </p>
+                      <Button onClick={ this.hideAlert.bind(this) }>Close</Button>
+                    </Alert>
+
+                    <ButtonInput value="Create" onClick={ this.submit.bind(this) } />
+                  </Panel>
+
+                  <Panel>
+                    <Input type="file" onChange={ this.updateFile.bind(this) } />
+                    <ButtonInput value="Upload" onClick={ this.upload.bind(this) } />
+                  </Panel>
+
                 </Col>
               </Row>
 
