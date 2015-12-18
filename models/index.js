@@ -2,22 +2,33 @@
 
 let fs =           require("fs");
 let parseArticle = require("./parseArticle");
-let config       = require("../config");
+let config =       require("../config");
 
+/*
+ * 测试一个地址path，如果这个地址存在并且是目录就什么都不做，如果这个地址不存在文件，则创建目录
+ */
 function existsOrMkdir (path) {
   let stat = null;
   try {
     stat = fs.statSync(path);
-  } catch (e) {
-    fs.mkdirSync(path);
-    stat = fs.statSync(path);
+  } catch (e) { }
+
+  if ( !stat ) {
+    try {
+      fs.mkdirSync(path);
+      stat = fs.statSync(path);
+    } catch (e) { }
   }
 
   if ( !stat || !stat.isDirectory() ) {
-    throw new Error(`${path} Invalid`);
+    throw new Error(`existsOrMkdir: ${path} Invalid`);
   }
 }
 
+/*
+ * 读取文章列表，多层选择和循环确实丑了一点
+ * 必须要用Sync方法读取，否则可能在Linux同时打开过多文件报错
+ */
 function readDatabase () {
   let result = [];
   let rDir = "./database/articles";
@@ -45,6 +56,10 @@ function readDatabase () {
   }
   return result;
 }
+
+class AA {
+
+};
 
 
 module.exports = {

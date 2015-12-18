@@ -1,4 +1,4 @@
-
+"use strict";
 
 
 /* Markdown Converter */
@@ -36,17 +36,25 @@ export default function markdown (source) {
     // 把latex公式挑出来，行内的$之间，跨行的$$之间
     converted = converted.replace(/\$\$((?!\$\$)[^\0]){0,1024}\$\$|\$((?!\$)[^\0\r\n]){0,128}\$/g, (match) => {
       var possibleMath = match;
-      while (possibleMath[0] == "$") possibleMath = possibleMath.substr(1);
-      while (possibleMath[possibleMath.length - 1] == "$") possibleMath = possibleMath.substr(0, possibleMath.length - 1);
+      // 去掉最开头的美元符号
+      while (possibleMath[0] == "$") {
+        possibleMath = possibleMath.substr(1);
+      }
+      // 去掉结尾的美元符号
+      while (possibleMath[possibleMath.length - 1] == "$") {
+        possibleMath = possibleMath.substr(0, possibleMath.length - 1);
+      }
       var math = null;
       try {
+        // 如果katex发现这个字符串不是公式，会throw错误
         math = katex.renderToString(possibleMath);
       } catch (e) {}
       if (math) {
         mathArray.push(math);
         return "[MATH-" + (mathArray.length - 1).toString() + "]";
+      } else {
+        return match;
       }
-      return match;
     });
 
     converted = marked(converted);

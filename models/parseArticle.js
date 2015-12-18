@@ -1,15 +1,29 @@
 "use strict";
 
+/*
+
+文章格式：
+
+title: 文章标题
+type: 文章类型，post或者article
+date: 2010-10-10 10:10:10
+category: 文章类别
+edit: 可选，最后更新日期
+---
+
+文章正文，准确来说，---\n\n之后的内容都应该是正文
+
+*/
 module.exports = function (data) {
-  var s = "---";
-  var pos = data.indexOf(s);
+  var splitor = "---";
+  var pos = data.indexOf(splitor);
 
   if (pos == -1) {
     throw new Error("parse: file have not splitor");
   }
 
   var header = data.substr(0, pos);
-  var content = data.substr(pos + s.length).trim();
+  var content = data.substr(pos + splitor.length).trim();
 
   var elem = {};
   elem.title = header.match(/title:\ ([^\0\n]+)\n/);
@@ -18,7 +32,7 @@ module.exports = function (data) {
   elem.title = elem.title[1];
   elem.date = elem.date[1];
 
-  var date = elem.date.match(/(\d{4})-([0-1][0-9])-([0-3][0-9]) ([0-2][0-9]):([0-5][0-9]):([0-5][0-9])/);
+  var date = elem.date.match(/^(\d{4})-([0-1]\d)-([0-3]\d) ([0-2]\d):([0-5]\d):([0-5]\d)$/);
   if (!date) { throw new Error("parse: file date can't be parsed"); }
 
   elem.type = header.match(/type:\ ([^\0\n]+)\n/);

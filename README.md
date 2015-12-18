@@ -10,3 +10,7 @@ webpack ~1.12.9带的crypto-browserify版本太旧了，然后我自己装了bro
 wepack 开了uglifyjs真是慢啊，当然也是预料中的
 
 没用react-router，因为这个不算官方的，觉得不是很爽，自己写个了简单的router，但是遇到了不少bug，主要是url hash更新的问题
+
+## demo
+
+http://qhduan.com

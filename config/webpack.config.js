@@ -5,7 +5,7 @@ var webpack = require("webpack");
 
 module.exports = {
   entry: {
-    App: path.resolve(__dirname, "src/js/App.jsx")
+    App: path.resolve(__dirname, "../src/js/App.jsx")
   },
   module: {
     loaders: [
@@ -28,10 +28,14 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.optimize.UglifyJsPlugin()
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      }
+    })
   ],
   output: {
-    path: path.resolve(__dirname, "public/"),
+    path: path.resolve(__dirname, "../public/"),
     publicPath: "/",
     filename: "App.js"
   }

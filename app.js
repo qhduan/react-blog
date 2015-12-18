@@ -2,32 +2,33 @@
 
 require("babel-register");
 
-let express =           require("express");
-let path =              require("path");
-let bodyParser =        require("body-parser");
-let compression =       require("compression");
-let webpackMiddleware = require("webpack-dev-middleware");
+let express =     require("express");
+let path =        require("path");
+let bodyParser =  require("body-parser");
+let compression = require("compression");
 
-let db =                require("./models");
-
-db.init();
+// 初始化文章数据库
+require("./models").init();
 
 let app = express();
 
-if (process.env.NODE_ENV == "development") {
+// 调试环境，加载webpack的调试中间价
+if (process.env.NODE_ENV !== "production") {
   console.log("Development");
 
   let webpack              = require("webpack");
   let webpackDevMiddleware = require("webpack-dev-middleware");
-  let webpackConfig        = require("./webpack.config");
-
-  delete webpackConfig.plugins;
+  let webpackConfig        = require("./config/webpack.config");
 
   let compiler = webpack(webpackConfig);
+
+  // 关闭plugin，因为uglify太耗时了
+  webpackConfig.plugins = [];
+
   app.use(webpackDevMiddleware(compiler, {
     publicPath: webpackConfig.output.publicPath,
-    noInfo: false,
-    quiet: false,
+    noInfo: true, // display no info to console (only warnings and errors)
+    quiet: false, // display nothing to the console
     stats: {
       colors: true
     }
@@ -41,14 +42,14 @@ app.use(express.static(path.join(__dirname, "database")));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/article", require("./routes/article"));
 
-
+// 404 服务
 app.use((req, res, next) => {
   var err = new Error("Page Not Found");
   err.status = 404;
   next(err);
 });
 
-
+// 500 服务
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.end(`
