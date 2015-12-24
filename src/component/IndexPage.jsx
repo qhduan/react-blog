@@ -1,8 +1,10 @@
 "use strict";
 
+import "isomorphic-fetch";
 import React    from "react";
 import ReactDOM from "react-dom";
-import $        from "jquery";
+
+import { Link } from "react-router";
 
 import "../css/IndexPage.scss";
 
@@ -18,9 +20,7 @@ class Item extends React.Component {
   render () {
     return (
       <ListGroupItem>
-        <a href={ this.props.url }>
-          { this.props.title }
-        </a>
+        <Link to={ this.props.url }>{ this.props.title }</Link>
       </ListGroupItem>
     );
   }
@@ -42,37 +42,52 @@ export default class IndexPage extends React.Component {
       maxPage: 1
     };
 
+    this.result = null;
+
     document.querySelector("title").textContent = this.state.title;
 
   }
 
-  componentWillUnmount() {
-    this.willUnmount = true;
+  fetch () {
+    return new Promise( (resolve, reject) => {
+      if (this.result) {
+        resolve(this.result);
+      } else {
+        fetch("/index.json")
+        .then( (response) => {
+          return response.json();
+        })
+        .then( (result) => {
+          console.log("result: ", result);
+          this.result = result;
+          resolve(result);
+        })
+        .catch( (err) => {
+          reject();
+        });
+      }
+    });
+
   }
 
-  refresh () {
+  show () {
+    let page = 1;
+    let category = "";
 
-    if (this.willUnmount) return;
-
-    let m = document.URL.match(/\/page\/(\d{1,10})/);
-    if (m) {
-      this.state.page = parseInt(m[1]);
-    } else {
-      this.state.page = 1;
+    if (this.props && this.props.params && this.props.params.page) {
+      page = parseInt(this.props.params.page);
+      if ( isNaN(page) || page <= 0 ) {
+        page = 1;
+      }
     }
-    m = document.URL.match(/\/category\/([^\/]+)/);
-    if (m) {
-      this.state.category = decodeURIComponent(m[1]);
-    } else {
-      this.state.category = "";
+
+    if (this.props && this.props.params && this.props.params.category) {
+      category = this.props.params.category;
     }
-    console.log("cate, page: ", this.state.category, this.state.page);
 
+    console.log("category, page: ", "'" + category + "'", page);
 
-    $.get("/index.json").done((result) => {
-
-      if (this.willUnmount) return;
-      console.log("result: ", result);
+    this.fetch().then( (result) => {
 
       result.articles.sort((a, b) => {
         if (a[2] > b[2]) return -1;
@@ -88,12 +103,6 @@ export default class IndexPage extends React.Component {
         return elem[3] == "post";
       });
 
-      if (this.state.category.length) {
-        posts = posts.filter((elem) => {
-          return elem[4] == this.state.category;
-        });
-      }
-
       let categories = [];
       posts.forEach((elem) => {
         let category = elem[4];
@@ -102,40 +111,59 @@ export default class IndexPage extends React.Component {
         }
       });
 
+      if (category.length) {
+        posts = posts.filter((elem) => {
+          return elem[4] == category;
+        });
+      }
+
       let maxPage = Math.ceil(posts.length / result.config.pageCount);
       maxPage = maxPage < 1 ? 1 : maxPage;
-      this.setState({ maxPage: maxPage });
-      if (this.state.page > this.state.maxPage) {
-        this.setState({ page: this.state.maxPage });
+      if (page > maxPage) {
+        page = maxPage;
       }
 
       posts = posts.slice(
-        (this.state.page - 1) * result.config.pageCount,
-        this.state.page * result.config.pageCount
+        (page - 1) * result.config.pageCount,
+        page * result.config.pageCount
       );
-      console.log("cate, page: ", this.state.page, this.state.maxPage, result.config.pageCount);
+      console.log("maxPage, pageCount: ", page, maxPage, result.config.pageCount);
 
       document.querySelector("title").textContent = result.config.title;
 
       this.setState({
+        page: page,
+        category: category,
+        maxPage: maxPage,
         articles: articles.map((elem) => {
-          return <Item key={ elem[0] } url={ "/#view/" + elem[0] } title={ elem[1] } />;
+          return <Item key={ elem[0] } url={ "/view/" + elem[0] } title={ elem[1] } />;
         }),
         posts: posts.map((elem) => {
-          return <Item key={ elem[0] } url={ "/#view/" + elem[0] } title={ elem[1] } />;
+          return <Item key={ elem[0] } url={ "/view/" + elem[0] } title={ elem[1] } />;
         }),
         categories: categories.map((elem) => {
-          return <Item key={ elem } url={ "/#/category/" + elem + "/page/1" } title={ elem } />;
+          return <Item key={ elem } url={ "/category/" + elem + "/page/1" } title={ elem } />;
         }),
         title: result.config.title
       });
-    }).fail(() => {
-      console.log("ajax fail: " + arguments);
+    }).catch( (err) => {
+      console.log("fetch fail: " + err);
     });
   }
 
   componentDidMount () {
-    this.refresh();
+    this.show();
+  }
+
+  componentDidUpdate (prevProps) {
+    let oldCategory = prevProps.params && prevProps.params.category;
+    let newCategory = this.props.params && this.props.params.category;
+    let oldPage = prevProps.params && prevProps.params.page;
+    let newPage = this.props.params && this.props.params.page;
+    console.log(oldCategory, newCategory, oldPage, newPage)
+    if (oldCategory != newCategory || oldPage != newPage) {
+      this.show();
+    }
   }
 
   page (p) {
@@ -144,11 +172,11 @@ export default class IndexPage extends React.Component {
     } else if (p > this.state.maxPage) {
       p = this.state.maxPage;
     }
-    let url = "/#";
+    let url = "/";
     if (this.state.category.length) {
-      url += `/category/${this.state.category}/page/${p}`;
+      url += `category/${this.state.category}/page/${p}`;
     } else {
-      url += `/page/${p}`;
+      url += `page/${p}`;
     }
     return url;
   }
@@ -164,7 +192,7 @@ export default class IndexPage extends React.Component {
                 <Col xs={12}>
                   <header>
                     <PageHeader>
-                      <a href="/#">{ this.state.title }</a>
+                      <Link to="/">{ this.state.title }</Link>
                     </PageHeader>
                   </header>
                 </Col>
@@ -183,9 +211,9 @@ export default class IndexPage extends React.Component {
                     { this.state.posts }
                   </ListGroup>
 
-                  <a href={ this.page(this.state.page - 1) } >Prev</a> &nbsp;
+                  <Link to={ this.page(this.state.page - 1) } >Prev</Link> &nbsp;
                   <span>{ this.state.page } / { this.state.maxPage }</span> &nbsp;
-                  <a href={ this.page(this.state.page + 1) } >Next</a>
+                  <Link to={ this.page(this.state.page + 1) } >Next</Link>
                 </Col>
               </Row>
 
@@ -193,7 +221,7 @@ export default class IndexPage extends React.Component {
                 <Col className="footer" xs={12}>
                   <footer>
                     <hr />
-                    <a href="/#create">Create</a>
+                    <Link to="/create">Create</Link>
                   </footer>
                 </Col>
               </Row>

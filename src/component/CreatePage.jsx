@@ -1,69 +1,33 @@
 "use strict";
 
+import "isomorphic-fetch";
 import React    from "react";
 import ReactDOM from "react-dom";
-import $        from "jquery";
 
 import markdown from "../../models/markdown";
-import parseArticle from "../../models/parseArticle";
 import secret   from "../../models/secret";
 
-import "../css/UpdatePage.scss";
-
+import "../css/CreatePage.scss";
 
 import { Grid, Row, Col, PageHeader, Panel, Input, ButtonInput, Button, Alert } from "react-bootstrap";
 
 
-export default class UpdatePage extends React.Component {
+export default class CreatePage extends React.Component {
 
   constructor (props) {
     super(props);
 
     this.state = {
-      id:       "",
       title:    "",
       type:     "post",
-      date:     "",
+      date:     new Date().toJSON().substr(0, 19).replace("T", " "),
       category: "",
       content:  "",
       view:     "",
-      edit:     new Date().toJSON().substr(0, 19).replace("T", " "),
       password: "",
       file:     null,
       message:  ""
     };
-
-    let id = document.URL.match(/#update\/(\d{4})([0-1]\d)([0-3]\d)(\d{2})$/);
-    if (id) {
-      let year = id[1];
-      let month = id[2];
-      let day = id[3];
-      let number = id[4];
-
-      id = year + month + day + number;
-      this.state.id = id;
-      console.log(id);
-
-      $.get(`articles/${year}/${month}/${id}.md`).done((result) => {
-        // console.log("result: ", result);
-        let data = parseArticle(result);
-
-        document.querySelector("title").textContent = data.title;
-
-        this.setState({
-          title:    data.title,
-          type:     data.type,
-          date:     data.date,
-          category: data.category,
-          content:  data.content
-        });
-      }).fail(() => {
-        console.log("ajax fail: " + arguments);
-      });
-    } else {
-      console.log("wrong id");
-      window.location.href = "/#";
-    }
 
     document.querySelector("title").textContent = "Create";
   }
@@ -78,10 +42,6 @@ export default class UpdatePage extends React.Component {
 
   updateDate (e) {
     this.setState({ date: e.target.value });
-  }
-
-  updateEdit (e) {
-    this.setState({ edit: e.target.value });
   }
 
   updateCategory (e) {
@@ -120,13 +80,25 @@ export default class UpdatePage extends React.Component {
         if (reader.result && reader.result.length && reader.result.match(/base64,/)) {
           let pos = reader.result.indexOf("base64,");
           let data = reader.result.substr(pos + 7);
-          $.post("/upload", {
-            data: secret.encode({
-              name: name,
-              file: data,
-              date: this.state.date
-            }, this.state.password)
-          }).done((result) => {
+
+          fetch("/upload", {
+            method: "post",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              data: secret.encode({
+                name: name,
+                file: data,
+                date: this.state.date
+              }, this.state.password)
+            })
+          })
+          .then( (response) => {
+            return response.json();
+          })
+          .then( (result) => {
             if (result.success) {
               alert("uploaded " + result.success);
               this.setState({
@@ -138,9 +110,11 @@ export default class UpdatePage extends React.Component {
                 message: result.message || "Unknown Error"
               });
             }
-          }).fail(() => {
-            alert("ajax error");
+          })
+          .catch( (err) => {
+            console.log("fetch fail: ", err);
           });
+
         }
       };
       reader.readAsDataURL(this.state.file)
@@ -149,20 +123,27 @@ export default class UpdatePage extends React.Component {
 
   submit () {
     let data = {
-      id:       this.state.id,
       title:    this.state.title,
       type:     this.state.type,
       date:     this.state.date,
       category: this.state.category,
-      content:  this.state.content,
-      edit:     this.state.edit
+      content:  this.state.content
     };
 
-    console.log(data);
-
-    $.post("/article/update", {
-      data: secret.encode(data, this.state.password)
-    }).done((result) => {
+    fetch("/article/create", {
+      method: "post",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        data: secret.encode(data, this.state.password)
+      })
+    })
+    .then( (response) => {
+      return response.json();
+    })
+    .then( (result) => {
       if (result.success) {
         alert(result.success);
         window.location.href = "/#";
@@ -172,9 +153,11 @@ export default class UpdatePage extends React.Component {
           message: result.message || "Unknown Error"
         });
       }
-    }).fail(() => {
-      alert("ajax error");
+    })
+    .catch( (err) => {
+      console.log("fetch fail: ", err);
     });
+
   }
 
   render () {
@@ -200,15 +183,14 @@ export default class UpdatePage extends React.Component {
               <Row>
                 <Col xs={12}>
                   <Panel>
-                    <Input type="text" label="Title" value={ this.state.title } onChange={ this.updateTitle.bind(this) } />
-                    <Input type="select" label="Type" value={ this.state.type } onChange={ this.updateType.bind(this) } >
+                    <Input type="text" label="Title" placeholder="Enter title" onChange={ this.updateTitle.bind(this) } />
+                    <Input type="select" label="Type" placeholder="Type" onChange={ this.updateType.bind(this) } >
                       <option value="post">Post</option>
                       <option value="article">Article</option>
                     </Input>
                     <Input type="text" label="Date" value={ this.state.date } onChange={ this.updateDate.bind(this) } readOnly />
-                    <Input type="text" label="Edit Date" value={ this.state.edit } onChange={ this.updateEdit.bind(this) } readOnly />
-                    <Input type="text" label="Category" value={ this.state.category } onChange={ this.updateCategory.bind(this) } />
-                    <Input className="content" type="textarea" label="Content" value={ this.state.content } onChange={ this.updateContent.bind(this) } />
+                    <Input type="text" label="Category" placeholder="Enter category" onChange={ this.updateCategory.bind(this) } />
+                    <Input className="content" type="textarea" label="Content" placeholder="Enter content" value={ this.state.content } onChange={ this.updateContent.bind(this) } />
                     <Panel>
                       <div className="view" dangerouslySetInnerHTML={ { __html: this.state.view } }></div>
                     </Panel>
@@ -221,13 +203,14 @@ export default class UpdatePage extends React.Component {
                       <Button onClick={ this.hideAlert.bind(this) }>Close</Button>
                     </Alert>
 
-                    <ButtonInput value="Submit" onClick={ this.submit.bind(this) } />
+                    <ButtonInput value="Create" onClick={ this.submit.bind(this) } />
                   </Panel>
 
                   <Panel>
                     <Input type="file" onChange={ this.updateFile.bind(this) } />
                     <ButtonInput value="Upload" onClick={ this.upload.bind(this) } />
                   </Panel>
+
                 </Col>
               </Row>
 

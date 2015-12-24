@@ -1,8 +1,8 @@
 "use strict";
 
+import "isomorphic-fetch";
 import React        from "react";
 import ReactDOM     from "react-dom";
-import $            from "jquery";
 
 import markdown     from "../../models/markdown";
 import parseArticle from "../../models/parseArticle";
@@ -24,35 +24,38 @@ export default class ViewPage extends React.Component {
       title:   "",
       content: ""
     };
+  }
 
-    document.querySelector("title").textContent = "";
+  componentDidMount () {
+    const id = this.props.params.id;
 
-    let id = document.URL.match(/#view\/(\d{4})([0-1]\d)([0-3]\d)(\d{2})$/);
-    if (id) {
-      let year = id[1];
-      let month = id[2];
-      let day = id[3];
-      let number = id[4];
+    const match = id.match(/^(\d{4})([0-1]\d)([0-3]\d)(\d{2})$/);
+    if (match) {
 
-      id = year + month + day + number;
-      this.state.id = id;
+      const [, year, month, day, number] = match;
 
-      $.get(`articles/${year}/${month}/${id}.md`).done((result) => {
-        // console.log("result: ", result);
+      const url = `articles/${year}/${month}/${id}.md`;
+
+      fetch(url)
+      .then( (response) => {
+        if ( response.status >= 400 ) {
+          throw new Error("Bad response from server");
+        }
+
+        return response.text();
+      }).then( (result) => {
         let data = parseArticle(result);
-
-        console.log(data);
-
+        console.log("data: ", data);
         document.querySelector("title").textContent = data.title;
-
         this.setState({
+          id:       id,
           title:    data.title,
           date:     data.date,
           category: data.category,
           content:  markdown(data.content)
         });
-      }).fail(() => {
-        console.log("ajax fail: " + arguments);
+      }).catch( (err) => {
+        console.log("fetch fail: ", err);
       });
     } else {
       console.log("wrong id");
@@ -64,20 +67,34 @@ export default class ViewPage extends React.Component {
     e.preventDefault();
     let password = window.prompt("Password please", "");
     if (password != null) {
-      $.post("/article/remove", {
-        data: secret.encode({
-          id: this.state.id
-        }, password)
-      }).done((result) => {
+
+      const url = "/article/remove";
+
+      fetch(url, {
+        method: "post",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          data: secret.encode({ id: this.state.id }, password)
+        })
+      })
+      .then( (response) => {
+        return response.json();
+      })
+      .then( (result) => {
         if (result.success) {
           alert(result.success);
           window.location.href = "/#";
         } else {
           alert(result.message || "Unknown Error");
         }
-      }).fail(() => {
-        alert("ajax error");
+      })
+      .catch( (err) => {
+        console.log("fetch fail: ", err);
       });
+
     }
   }
 
