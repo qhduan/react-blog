@@ -18,12 +18,10 @@ if (process.env.NODE_ENV !== "production") {
 
   let webpack              = require("webpack");
   let webpackDevMiddleware = require("webpack-dev-middleware");
-  let webpackConfig        = require("./config/webpack.config");
+  let webpackHotMiddleware = require("webpack-hot-middleware");
+  let webpackConfig        = require("./config/webpack.config.dev");
 
   let compiler = webpack(webpackConfig);
-
-  // 关闭plugin，因为uglify太耗时了
-  webpackConfig.plugins = [];
 
   app.use(webpackDevMiddleware(compiler, {
     publicPath: webpackConfig.output.publicPath,
@@ -33,6 +31,7 @@ if (process.env.NODE_ENV !== "production") {
       colors: true
     }
   }));
+  app.use(webpackHotMiddleware(compiler));
 }
 
 app.use(bodyParser.json({ limit: "2mb" }));

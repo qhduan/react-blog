@@ -4,9 +4,10 @@ var path =    require("path");
 var webpack = require("webpack");
 
 module.exports = {
-  entry: {
-    App: path.resolve(__dirname, "../src/js/App.jsx")
-  },
+  entry: [
+    "webpack-hot-middleware/client",
+    "./src/js/App.jsx"
+  ],
   module: {
     loaders: [
       { // babel
@@ -28,11 +29,9 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    })
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
   ],
   output: {
     path: path.resolve(__dirname, "../public/"),

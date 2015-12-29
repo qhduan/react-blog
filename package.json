@@ -3,7 +3,7 @@
   "description": "React Blog",
   "version": "0.0.2",
   "scripts": {
-    "build": "webpack --config ./config/webpack.config.js",
+    "build": "webpack --config ./config/webpack.config.prod.js",
     "dev": "NODE_ENV=development node index",
     "development": "NODE_ENV=development node index",
     "prod": "NODE_ENV=production node index",
@@ -42,7 +42,8 @@
     "sass-loader": "~3.1.2",
     "style-loader": "~0.13.0",
     "webpack": "~1.12.9",
-    "webpack-dev-middleware": "~1.4.0"
+    "webpack-dev-middleware": "~1.4.0",
+    "webpack-hot-middleware": "^2.6.0"
   },
   "readme": "README.md",
   "license": "GPL-3.0",
