@@ -9,7 +9,9 @@ import { pushPath } from "redux-simple-router";
 
 import { fetchData } from "../actions/home.js";
 import Loading from "../component/Loading.js";
+import Article from "../component/Article.js";
 import "../css/Home.scss";
+
 
 class Home extends Component {
 
@@ -23,7 +25,17 @@ class Home extends Component {
   }
 
   render () {
-    const { isFetching, title, category, categories, articles, posts, page, maxPage, dispatch } = this.props;
+    const {
+      isFetching,
+      title,
+      category,
+      categories,
+      articles,
+      posts,
+      page,
+      maxPage,
+      dispatch
+    } = this.props;
     let prevPage = page > 1 ? page - 1 : 1;
     let nextPage = page < maxPage ? page + 1 : maxPage;
     prevPage = prevPage == 1 ? "/" : "/page/" + prevPage;
@@ -39,41 +51,67 @@ class Home extends Component {
         <header>
           <h1><Link to="/">{ title }</Link></h1>
         </header>
-        <div className="main">
-          <aside className="left-side">
-            <section>
-              <h4>Articles</h4>
-              <ul>
-                { this.props.articles.map((element, index) => {
-                  return (<li key={ index }><Link to={ "/view/" + element[0] }>{ element[1] }</Link></li>);
-                }) }
-              </ul>
-            </section>
-            <section>
-              <h4>Categories</h4>
-              <ul>
-                { this.props.categories.map((element, index) => {
-                  return (<li key={ index }><Link to={ "/category/" + element }>{ element }</Link></li>)
-                }) }
-              </ul>
-            </section>
-          </aside>
-          <aside className="right-side">
-            <section>
-              <h4>{ category.length ? (<span>Category: { category }, <Link to="/">Back</Link> </span>) : (<span>Posts</span>) } </h4>
-              <ul>
-                { this.props.posts.map((element, index) => {
-                  return (<li key={ index }><Link to={ "/view/" + element[0] }>{ element[1] }</Link></li>);
-                }) }
-              </ul>
-              <div className="post-footer">
-                <span>{ page } / { maxPage }</span>
-                <span><Link to={ prevPage }>Prev</Link></span>
-                <span><Link to={ nextPage }>Next</Link></span>
-              </div>
-            </section>
-          </aside>
-        </div>
+
+        <nav>
+          { articles.map((element, index) => {
+            return (
+              <Link
+                key={ index }
+                to={ "/view/" + element[0] }>
+                { element[1] }
+              </Link>
+            );
+          }) }
+        </nav>
+
+        { category.length ? (
+            <div className="category-hint">
+              Current category is: { category }.&nbsp;
+              <Link to="/">Cancel</Link>
+            </div>
+          ) : "" }
+
+        <section className="articles-list">
+
+          { posts.map((element, index) => {
+            const id = element[0];
+            const title = element[1];
+            return (<Article key={ index } id={ id } title={ title } timeout={ index * 200 } />);
+          }) }
+
+          <div className="post-footer">
+            <span>{ page } / { maxPage }</span>
+            <span>
+              <Link
+                onClick={ event => { window.scroll(0, 0); } }
+                to={ prevPage }>
+                Prev
+              </Link>
+            </span>
+            <span>
+              <Link
+                onClick={ event => { window.scroll(0, 0); } }
+                to={ nextPage }>
+                Next
+              </Link>
+            </span>
+          </div>
+        </section>
+
+        <section className="categories-list">
+          Categories:
+          { categories.map((element, index) => {
+            return (
+              <Link
+                key={ index }
+                onClick={ event => { window.scroll(0, 0); } }
+                to={ "/category/" + element }>
+                { element }
+              </Link>
+            );
+          }) }
+        </section>
+
         <footer>
           <Link to="/create">Create</Link>
         </footer>

@@ -27,7 +27,7 @@ export function fetchData (id) {
   const month = m[2];
   return dispatch => {
     dispatch(requestData());
-    return fetch(`../articles/${year}/${month}/${id}.md`)
+    return fetch(`/articles/${year}/${month}/${id}.md`)
       .then(response => response.text())
       .then(data => parseArticle(data))
       .then(data => dispatch(receiveData(data)));

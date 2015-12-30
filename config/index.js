@@ -11,7 +11,7 @@ try {
 } catch (e) {
   config = {
     title:     "Blog Title",
-    pageCount: 10,
+    pageCount: 6,
     password:  "admin"
   };
   fs.writeFileSync("./config/config.json",

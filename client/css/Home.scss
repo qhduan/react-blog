@@ -4,67 +4,44 @@ $break-large: 1200px;
 
 .home {
 
-  ul {
-    list-style-type: none;
+  .category-hint {
+    text-align: center;
+    padding: 15px 0;
+  }
 
-    li {
-      margin: 10px 4px;
+  .articles-list {
+    max-width: 700px;
+    margin: auto;
+  }
+
+  .categories-list {
+    font-size: 14px;
+    text-align: center;
+    padding: 20px 0;
+
+    a {
+      margin: 15px;
     }
   }
 
   header {
     width: 100%;
     text-align: center;
-    border-bottom: 1px solid #ccc;
     h1 {
       font-size: 50px;
     }
   }
 
-  section {
-    padding: 2px;
-    margin: 2px;
-    h4 {
-      display: inline-block;
-      text-align: center;
-      width: 100%;
-      font-weight: bold;
-      font-size: 18px;
-      padding: 5px;
-      margin: 0px;
+  nav {
+    font-size: 14px;
+    text-align: center;
+    padding: 20px 0;
+    border-top: 1px solid #ebebeb;
+    border-bottom: 1px solid #ebebeb;
+
+    a {
+      margin: 15px;
     }
-  }
-
-  .main {
-    
-    overflow: hidden;
-
-    .left-side {
-      width: 38%;
-      float: left;
-      height: 100%;
-      border-right: 1px solid #ccc;
-      padding-bottom: 500em; /* 为了让left-side和right-side同样高度 */
-      margin-bottom: -500em;
-
-      @media screen and (max-width: $break-small) {
-        border-right: none;
-        width: 100%;
-      }
-    }
-
-    .right-side {
-      width: 61%;
-      float: right;
-      height: 100%;
-      padding-bottom: 500em;
-      margin-bottom: -500em;
-
-      @media screen and (max-width: $break-small) {
-        width: 100%;
-      }
-    }
-
   }
 
   .post-footer {
@@ -76,8 +53,7 @@ $break-large: 1200px;
   }
 
   footer {
-    border-top: 1px solid #ccc;
-    padding-top: 20px;
+    padding: 20px 0;
     width: 100%;
     float: right;
     text-align: right;

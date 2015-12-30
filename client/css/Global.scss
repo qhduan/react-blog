@@ -2,9 +2,18 @@
 $break-small: 700px;
 $break-large: 1200px;
 
+@font-face {
+  font-family: PTserif;
+  src: url(/font.ttf);
+}
+
 html, body {
-  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-family: PTserif, serif;
   font-size:1em;
+}
+
+hr {
+  color: #ebebeb;
 }
 
 a {
@@ -20,6 +29,7 @@ a {
 
 a:hover {
   animation: linkAnimation .2s linear 0s 1;
+  color: blue;
 }
 
 .container {
