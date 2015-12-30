@@ -1,14 +1,17 @@
 "use strict";
 
-let fs      = require("fs");
-let express = require("express");
-let db =      require("../models");
-let secret =  require("../models/secret");
-let config =  require("../config");
+import fs from"fs";
+import express from "express";
+import database from "../component/database";
+import secret from "../component/secret";
+import config from "../config";
 
-let router = express.Router();
+let upload = express.Router();
 
-router.post("/", (req, res, next) => {
+/*
+ * 上传文件
+ */
+upload.post("/", (req, res, next) => {
   let data = secret.decode(req.body.data, config.password);
   if ( !data ) return res.json({ message: "Invalid password" });
 
@@ -20,7 +23,7 @@ router.post("/", (req, res, next) => {
   if ( !checkDate     (date) ) return res.json({ message: "Invalid date" });
   if ( !checkFile     (file) ) return res.json({ message: "Invalid file" });
 
-  let ret = db.upload(name, date, file);
+  let ret = database.upload(name, date, file);
   if ( !ret ){
     return res.json({ message: "Invalid upload" });
   }
@@ -41,4 +44,4 @@ function checkFile (file) {
 }
 
 
-module.exports = router;
+export default upload;

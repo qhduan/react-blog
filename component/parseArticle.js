@@ -14,7 +14,7 @@ edit: 可选，最后更新日期
 文章正文，准确来说，---\n\n之后的内容都应该是正文
 
 */
-module.exports = function (data) {
+export default function parseArticle (data) {
   var splitor = "---";
   var pos = data.indexOf(splitor);
 

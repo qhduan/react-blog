@@ -1,17 +1,17 @@
 "use strict";
 
-let fs      = require("fs");
-let express = require("express");
-let db =      require("../models");
-let secret =  require("../models/secret");
-let config =  require("../config");
+import fs from"fs";
+import express from "express";
+import database from "../component/database";
+import secret from "../component/secret";
+import config from "../config";
 
-let router = express.Router();
+let article = express.Router();
 
 /*
  * 创建新文章
  */
-router.post("/create", (req, res, next) => {
+article.post("/create", (req, res, next) => {
   let data = secret.decode(req.body.data, config.password);
   if ( !data ) return res.json({ message: "Invalid password" });
 
@@ -27,16 +27,17 @@ router.post("/create", (req, res, next) => {
   if ( !checkCategory (category) ) return res.json({ message: "Invalid category" });
   if ( !checkContent   (content) ) return res.json({ message: "Invalid content" });
 
-  let ret = db.create(title, type, date, category, content);
+  let ret = database.create(title, type, date, category, content);
   if ( !ret ) {
     return res.json({ message: "Invalid article" });
   }
   res.json({ success: "created" });
 });
+
 /*
  * 修改文章
  */
-router.post("/update", (req, res, next) => {
+article.post("/update", (req, res, next) => {
   let data = secret.decode(req.body.data, config.password);
   if ( !data ) return res.json({ message: "Invalid password" });
 
@@ -56,16 +57,17 @@ router.post("/update", (req, res, next) => {
   if ( !checkContent   (content) ) return res.json({ message: "Invalid content" });
   if ( !checkDate         (edit) ) return res.json({ message: "Invalid edit date" });
 
-  let ret = db.update(id, title, type, date, category, content, edit);
+  let ret = database.update(id, title, type, date, category, content, edit);
   if ( !ret ) {
     return res.json({ message: "Invalid article" });
   }
   res.json({ success: "updated" });
 });
+
 /*
  * 删除文章
  */
-router.post("/remove", (req, res, next) => {
+article.post("/remove", (req, res, next) => {
   let data = secret.decode(req.body.data, config.password);
   if ( !data ) return res.json({ message: "Invalid password" });
 
@@ -73,7 +75,7 @@ router.post("/remove", (req, res, next) => {
 
   if ( !checkId(id) ) return res.json({ message: "Invalid id" });
 
-  let ret = db.remove(id);
+  let ret = database.remove(id);
   if ( !ret ) {
     return res.json({ message: "Invalid article" });
   }
@@ -105,4 +107,4 @@ function checkContent (content) {
 }
 
 
-module.exports = router;
+export default article;

@@ -6,17 +6,14 @@ var webpack = require("webpack");
 module.exports = {
   entry: [
     "webpack-hot-middleware/client",
-    "./src/js/App.jsx"
+    path.resolve(__dirname, "..", "client", "app.dev.js")
   ],
   module: {
     loaders: [
       { // babel
         test: /\.js$|\.jsx$/,
         exclude: /node_modules/,
-        loader: "babel",
-        query: {
-          presets: ["react", "es2015"]
-        }
+        loader: "babel"
       },
       { // CSS
         test: /\.css$/,
@@ -34,8 +31,8 @@ module.exports = {
     new webpack.NoErrorsPlugin()
   ],
   output: {
-    path: path.resolve(__dirname, "../public/"),
+    path: path.resolve(__dirname, "..", "public/"),
     publicPath: "/",
-    filename: "App.js"
+    filename: "app.js"
   }
 };

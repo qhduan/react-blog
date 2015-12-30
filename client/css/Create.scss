@@ -1,0 +1,51 @@
+
+.create.container {
+  max-width: 700px;
+  margin: auto;
+}
+
+.create {
+
+
+  header {
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    h1 {
+      font-size: 40px;
+    }
+  }
+
+  section {
+    padding: 10px;
+
+    label {
+      display: block;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input, select {
+      height: 24px;
+      width: 60%;
+    }
+
+    textarea {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 100%;
+      min-height: 200px;
+    }
+
+    #view {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      min-height: 20px;
+    }
+  }
+
+
+}

@@ -1,0 +1,40 @@
+
+$break-small: 700px;
+$break-large: 1200px;
+
+html, body {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size:1em;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+@keyframes linkAnimation {
+  0% { transform: scale(1, 1) }
+  50% { transform: scale(1.05, 1.05) }
+  100% { transform: scale(1, 1) }
+}
+
+a:hover {
+  animation: linkAnimation .2s linear 0s 1;
+}
+
+.container {
+  width: 90%;
+  margin-left: 5%;
+
+  @media screen and (max-width: $break-small) {
+    width: 98%;
+    margin-left: 1%;
+  }
+
+  @media screen and (min-width: $break-large) {
+    width: 60%;
+    max-width: 900px;
+    margin-left: 20%;
+  }
+
+}

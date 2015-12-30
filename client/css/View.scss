@@ -1,0 +1,28 @@
+
+.view.container {
+  max-width: 700px;
+  margin: auto;
+}
+
+.view {
+
+  header {
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    h1 {
+      font-size: 40px;
+    }
+  }
+
+  footer {
+    text-align: right;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+
+    span {
+      margin: 10px;
+    }
+  }
+
+}

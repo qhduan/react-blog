@@ -1,8 +1,8 @@
 "use strict";
 
-let fs =           require("fs");
-let parseArticle = require("./parseArticle");
-let config =       require("../config");
+import fs from "fs";
+import parseArticle from "./parseArticle.js";
+import config from "../config/index.js";
 
 /*
  * 测试一个地址path，如果这个地址存在并且是目录就什么都不做，如果这个地址不存在文件，则创建目录
@@ -67,9 +67,9 @@ function exists (path) {
 }
 
 
-module.exports = {
+export default class database {
 
-  init: function () {
+  static init () {
 
     existsOrMkdir("./database");
     existsOrMkdir("./database/articles");
@@ -89,16 +89,14 @@ module.exports = {
 
     fs.writeFileSync( "./database/index.json", JSON.stringify({
       articles: noContent,
-      config: {
-        title:     config.title,
-        pageCount: config.pageCount
-      }
+      title:     config.title,
+      pageCount: config.pageCount
     }), "utf8");
 
     console.log(`db loaded ${articles.length} articles`);
-  },
+  }
 
-  create: function (title, type, date, category, content) {
+  static create (title, type, date, category, content) {
     let m = date.match(/^(\d{4})-([0-1][0-9])-([0-3][0-9]) ([0-2][0-9]):([0-5][0-9]):([0-5][0-9])$/);
     let year = m[1];
     let month = m[2];
@@ -135,9 +133,9 @@ module.exports = {
     } catch (e) {
       return false;
     }
-  },
+  }
 
-  update: function (id, title, type, date, category, content, edit) {
+  static update (id, title, type, date, category, content, edit) {
 
     let m = date.match(/^(\d{4})-([0-1]\d)-([0-3]\d) ([0-2]\d):([0-5]\d):([0-5]\d)$/);
     let year = m[1];
@@ -155,9 +153,9 @@ module.exports = {
     } catch (e) {
       return false;
     }
-  },
+  }
 
-  remove: function (id) {
+  static remove (id) {
     let m = id.match(/^(\d{4})([0-1][0-9])([0-3][0-9])(\d\d)$/);
     let year = m[1];
     let month = m[2];
@@ -170,14 +168,14 @@ module.exports = {
     } catch (e) {
       return false;
     }
-  },
+  }
 
-  upload: function (name, date, file) {
+  static upload (name, date, file) {
 
     let m = date.match(/^(\d{4})-([0-1]\d)-([0-3]\d) ([0-2]\d):([0-5]\d):([0-5]\d)$/);
     let year = m[1];
     let month = m[2];
-    
+
     existsOrMkdir("./database");
     existsOrMkdir("./database/uploads");
     existsOrMkdir(`./database/uploads/${year}`);

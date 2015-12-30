@@ -1,0 +1,86 @@
+
+$break-small: 700px;
+$break-large: 1200px;
+
+.home {
+
+  ul {
+    list-style-type: none;
+
+    li {
+      margin: 10px 4px;
+    }
+  }
+
+  header {
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    h1 {
+      font-size: 50px;
+    }
+  }
+
+  section {
+    padding: 2px;
+    margin: 2px;
+    h4 {
+      display: inline-block;
+      text-align: center;
+      width: 100%;
+      font-weight: bold;
+      font-size: 18px;
+      padding: 5px;
+      margin: 0px;
+    }
+  }
+
+  .main {
+    
+    overflow: hidden;
+
+    .left-side {
+      width: 38%;
+      float: left;
+      height: 100%;
+      border-right: 1px solid #ccc;
+      padding-bottom: 500em; /* 为了让left-side和right-side同样高度 */
+      margin-bottom: -500em;
+
+      @media screen and (max-width: $break-small) {
+        border-right: none;
+        width: 100%;
+      }
+    }
+
+    .right-side {
+      width: 61%;
+      float: right;
+      height: 100%;
+      padding-bottom: 500em;
+      margin-bottom: -500em;
+
+      @media screen and (max-width: $break-small) {
+        width: 100%;
+      }
+    }
+
+  }
+
+  .post-footer {
+    margin-top: 20px;
+    text-align: right;
+    span {
+      margin: 5px;
+    }
+  }
+
+  footer {
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+    width: 100%;
+    float: right;
+    text-align: right;
+  }
+
+}

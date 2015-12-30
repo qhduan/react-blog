@@ -4,9 +4,9 @@
 /* Markdown Converter */
 import marked from "marked";
 import katex  from "katex";
-// import hljs   from "highlight.js";
+import hljs   from "highlight.js";
 
-// var languagesList = hljs.listLanguages();
+var languagesList = hljs.listLanguages();
 
 marked.setOptions({
   renderer:    new marked.Renderer(),
@@ -16,21 +16,17 @@ marked.setOptions({
   pedantic:    false,
   sanitize:    true,
   smartLists:  true,
-  smartypants: false
-});
-
-/*
-,
-highlight: function (code, lang) {
-  var out;
-  if (lang && languagesList.indexOf(lang) != -1) {
-    out = hljs.highlight(lang, code).value;
-  } else {
-    out = hljs.highlightAuto(code).value;
+  smartypants: false,
+  highlight: function (code, lang) {
+    var out;
+    if (lang && languagesList.indexOf(lang) != -1) {
+      out = hljs.highlight(lang, code).value;
+    } else {
+      out = hljs.highlightAuto(code).value;
+    }
+    return `${out}`;
   }
-  return `${out}`;
-}
-*/
+});
 
 export default function markdown (source) {
 
