@@ -6,7 +6,11 @@ import { connect } from "react-redux";
 import { Link } from "react-router";
 import { pushPath } from "redux-simple-router";
 
-import { fetchData, updateAttribute, updateSubmit } from "../actions/update.js";
+import {
+  fetchData,
+  updateAttribute,
+  updateSubmit,
+  updateUpload } from "../actions/update.js";
 import Loading from "../component/Loading.js";
 import Alert from "../component/Alert.js";
 import "../css/Update.scss";
@@ -15,6 +19,8 @@ class Update extends Component {
 
   constructor (props) {
     super(props);
+
+    this.file = null;
   }
 
   componentDidMount () {
@@ -28,11 +34,33 @@ class Update extends Component {
       this.refs.alert.show({
         message: nextProps.alertMsg,
         onclose: () => {
-          if (nextProps.alertMsg.match(/updated/)) {
+          if (nextProps.alertMsg.match(/Updated/i)) {
             dispatch(pushPath("/view/" + routeParams.id));
           }
         }
       });
+    }
+  }
+
+  updateFile (event) {
+    this.file = event.target.files[0];
+  }
+
+  upload (event) {
+    const { date, password, dispatch } = this.props;
+    if (this.file) {
+      const name = this.file.name;
+      let reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result && reader.result.length && reader.result.match(/base64,/)) {
+          const pos = reader.result.indexOf("base64,");
+          const file = reader.result.substr(pos + 7);
+          dispatch(updateUpload({
+            name, file, date, password
+          }));
+        }
+      };
+      reader.readAsDataURL(this.file);
     }
   }
 
@@ -78,8 +106,13 @@ class Update extends Component {
           <div dangerouslySetInnerHTML={ { __html: view } } id="view" ></div>
         </section>
         <section>
+          <label htmlFor="file">Upload:</label>
+          <input onChange={ event => { this.updateFile(event) } } id="file" type="file" />
+          <button onClick={ event => { this.upload(event) } } >Upload</button>
+        </section>
+        <section>
           <label htmlFor="password">Password:</label>
-          <input onChange={ event => { dispatch(updateAttribute("password", event.target.value)); } } id="password" type="password" />
+          <input onChange={ event => { dispatch(updateAttribute("password", event.target.value)); } } value={ password } id="password" type="password" />
         </section>
         <section>
           <button onClick={ event => { dispatch(updateSubmit({ id: routeParams.id, title, type, date, edit, category, content, password})); } } >

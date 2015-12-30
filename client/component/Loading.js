@@ -9,9 +9,11 @@ export default class Loading extends Component {
 
   render () {
     const { isFetching } = this.props;
-    return (<div className={ isFetching ? "loading" : "loading loading-decay" }>
-        <h1>Loading...</h1>
-      </div>);
+    return (
+      <div className={ isFetching ? "loading" : "loading loading-decay" }>
+        <span>Loading...</span>
+      </div>
+    );
   }
 };
 

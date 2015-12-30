@@ -23,12 +23,13 @@ upload.post("/", (req, res, next) => {
   if ( !checkDate     (date) ) return res.json({ message: "Invalid date" });
   if ( !checkFile     (file) ) return res.json({ message: "Invalid file" });
 
-  let ret = database.upload(name, date, file);
-  if ( !ret ){
-    return res.json({ message: "Invalid upload" });
-  }
-  res.json({ success: ret });
-
+  database.upload(name, date, file)
+  .then(url => {
+    res.json({ success: url });
+  })
+  .catch(err => {
+    res.json({ message: err });
+  });
 });
 
 function checkFilename (name) {

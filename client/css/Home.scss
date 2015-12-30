@@ -4,6 +4,17 @@ $break-large: 1200px;
 
 .home {
 
+  .scroll {
+    position: fixed;
+    bottom: 1%;
+    left: 1%;
+    font-size: 2em;
+    cursor: pointer;
+    a {
+      display: block;
+    }
+  }
+
   .category-hint {
     text-align: center;
     padding: 15px 0;
@@ -15,7 +26,7 @@ $break-large: 1200px;
   }
 
   .categories-list {
-    font-size: 14px;
+    font-size: 0.85em;
     text-align: center;
     padding: 20px 0;
 
@@ -28,12 +39,12 @@ $break-large: 1200px;
     width: 100%;
     text-align: center;
     h1 {
-      font-size: 50px;
+      font-size: 3em;
     }
   }
 
   nav {
-    font-size: 14px;
+    font-size: 0.85em;
     text-align: center;
     padding: 20px 0;
     border-top: 1px solid #ebebeb;

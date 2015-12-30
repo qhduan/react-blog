@@ -7,6 +7,8 @@ export const RECEIVE = "UPDATE-RECEIVE";
 export const ATTRIBUTE = "UPDATE-ATTRIBUTE";
 export const SUBMITTING = "UPDATE-SUBMITTING";
 export const SUBMITTED = "UPDATE-SUBMITTED";
+export const UPLOADING = "UPDATE-UPLOADING";
+export const UPLOADED = "UPDATE-UPLOADED";
 
 function requestData () {
   return {
@@ -74,4 +76,37 @@ export function updateSubmit ({id, title, type, date, edit, category, content, p
       .then(response => response.json())
       .then(ret => dispatch(updateSubmitted(ret)));
   };
+}
+
+function updateUploading () {
+  return {
+    type: UPLOADING
+  };
+}
+
+function updateUploaded (ret) {
+  return {
+    type: UPLOADED,
+    ret: ret
+  };
+}
+
+export function updateUpload ({name, file, date, password}) {
+  return dispatch => {
+    dispatch(updateUploading());
+    return fetch("/upload", {
+        method: "post",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          data: secret.encode({
+            name, file, date
+          }, password)
+        })
+      })
+      .then(response => response.json())
+      .then(ret => dispatch(updateUploaded(ret)));
+  }
 }

@@ -47,6 +47,10 @@ class Home extends Component {
     document.title = title;
     return (
       <div className="home container">
+        <div className="scroll">
+          <a onClick={ event => { event.preventDefault(); window.scroll(0, 0); } } href="">↑</a>
+          <a onClick={ event => { event.preventDefault(); window.scroll(0, 9002); } } href="">↓</a>
+        </div>
         <Loading isFetching={ isFetching } />
         <header>
           <h1><Link to="/">{ title }</Link></h1>

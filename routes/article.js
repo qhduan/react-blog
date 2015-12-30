@@ -27,11 +27,13 @@ article.post("/create", (req, res, next) => {
   if ( !checkCategory (category) ) return res.json({ message: "Invalid category" });
   if ( !checkContent   (content) ) return res.json({ message: "Invalid content" });
 
-  let ret = database.create(title, type, date, category, content);
-  if ( !ret ) {
-    return res.json({ message: "Invalid article" });
-  }
-  res.json({ success: "created" });
+  database.create(title, type, date, category, content)
+  .then(ret => {
+    res.json({ success: ret });
+  })
+  .catch(err => {
+    res.json({ message: err });
+  });
 });
 
 /*
@@ -57,11 +59,13 @@ article.post("/update", (req, res, next) => {
   if ( !checkContent   (content) ) return res.json({ message: "Invalid content" });
   if ( !checkDate         (edit) ) return res.json({ message: "Invalid edit date" });
 
-  let ret = database.update(id, title, type, date, category, content, edit);
-  if ( !ret ) {
-    return res.json({ message: "Invalid article" });
-  }
-  res.json({ success: "updated" });
+  database.update(id, title, type, date, category, content, edit)
+  .then(ret => {
+    res.json({ success: ret });
+  })
+  .catch(err => {
+    res.json({ message: err });
+  });
 });
 
 /*
@@ -75,11 +79,13 @@ article.post("/remove", (req, res, next) => {
 
   if ( !checkId(id) ) return res.json({ message: "Invalid id" });
 
-  let ret = database.remove(id);
-  if ( !ret ) {
-    return res.json({ message: "Invalid article" });
-  }
-  res.json({ success: "removed" });
+  database.remove(id)
+  .then(ret => {
+    res.json({ success: ret });
+  })
+  .catch(err => {
+    res.json({ message: err });
+  });
 });
 
 function checkId (id) {

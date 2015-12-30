@@ -5,7 +5,9 @@ import {
   RECEIVE,
   ATTRIBUTE,
   SUBMITTING,
-  SUBMITTED } from "../actions/update.js";
+  SUBMITTED,
+  UPLOADING,
+  UPLOADED  } from "../actions/update.js";
 
 import parseArticle from "../../component/parseArticle.js";
 import markdown from "../../component/markdown.js";
@@ -40,15 +42,14 @@ function updateReceive (state, action) {
 }
 
 export default function update (state = initialState, action) {
+  let data = {};
   switch (action.type) {
     case REQUEST:
-      return Object.assign({}, state, {
-        isFetching: true
-      });
+      data.isFetching = true;
+      return Object.assign({}, state, data);
     case RECEIVE:
       return updateReceive(state, action);
     case ATTRIBUTE:
-      let data = {};
       if (action.attribute == "content") {
         data.content = action.value;
         data.view = markdown(action.value);
@@ -57,14 +58,29 @@ export default function update (state = initialState, action) {
       }
       return Object.assign({}, state, data);
     case SUBMITTING:
-      return Object.assign({}, state, {
-        isFetching: true
-      });
+      data.isFetching = true;
+      return Object.assign({}, state, data);
     case SUBMITTED:
-      return Object.assign({}, state, {
-        isFetching: false,
-        alertMsg: (action.ret.success || action.ret.message || "Unknown Error") + `[${Date.now()}]`
-      });
+      data.isFetching = false;
+      data.alertMsg = (action.ret.success || action.ret.message || "Unknown Error") + `[${Date.now()}]`;
+      return Object.assign({}, state, data);
+    case UPLOADING:
+      data.isFetching = true;
+      return Object.assign({}, state, data);
+    case UPLOADED:
+      data.isFetching = false;
+      if (action.ret.success) {
+        const url = action.ret.success;
+        let add = `[${url}](${url})`;
+        if (url.match(/\.jpg$|\.png$|\.gif$|\.bmp$/ig)) {
+          add = "!" + add;
+        }
+        data.content = `${state.content}\n\n${add}\n\n`;
+        data.view = markdown(data.content);
+      } else {
+        data.alertMsg = (action.ret.message || "Unknown Error") + `[${Date.now()}]`;
+      }
+      return Object.assign({}, state, data);
     default:
       return state;
   }

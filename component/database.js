@@ -97,105 +97,110 @@ export default class database {
   }
 
   static create (title, type, date, category, content) {
-    let m = date.match(/^(\d{4})-([0-1][0-9])-([0-3][0-9]) ([0-2][0-9]):([0-5][0-9]):([0-5][0-9])$/);
-    let year = m[1];
-    let month = m[2];
-    let day = m[3];
+    return new Promise((resolve, reject) => {
+      const m = date.match(/^(\d{4})-([0-1][0-9])-([0-3][0-9]) ([0-2][0-9]):([0-5][0-9]):([0-5][0-9])$/);
+      const year = m[1];
+      const month = m[2];
+      const day = m[3];
 
-    existsOrMkdir("./database");
-    existsOrMkdir("./database/articles");
-    existsOrMkdir(`./database/articles/${year}`);
-    existsOrMkdir(`./database/articles/${year}/${month}`);
+      existsOrMkdir("./database");
+      existsOrMkdir("./database/articles");
+      existsOrMkdir(`./database/articles/${year}`);
+      existsOrMkdir(`./database/articles/${year}/${month}`);
 
-    let number = 0;
-    let getNumber = () => {
-      let r = number.toString();
-      if (r.length < 2) r = "0" + r;
-      return r;
-    }
+      let number = 0;
+      let getNumber = () => {
+        let r = number.toString();
+        if (r.length < 2) r = "0" + r;
+        return r;
+      }
 
-    let id = null;
-    let path = null;
-    do {
-      number++;
-      id = year + month + day + getNumber();
-      path = `./database/articles/${year}/${month}/${id}.md`;
-    } while ( exists(path) );
+      let id = null;
+      let path = null;
+      do {
+        number++;
+        id = year + month + day + getNumber();
+        path = `./database/articles/${year}/${month}/${id}.md`;
+      } while ( exists(path) );
 
-    try {
-      fs.writeFileSync(
-        path,
-        `title: ${title}\ntype: ${type}\ndate: ${date}\ncategory: ${category}\n---\n\n${content}`,
-        "utf8"
-      );
-      this.init();
-      return true;
-    } catch (e) {
-      return false;
-    }
+      try {
+        fs.writeFileSync(
+          path,
+          `title: ${title}\ntype: ${type}\ndate: ${date}\ncategory: ${category}\n---\n\n${content}`,
+          "utf8"
+        );
+        this.init();
+        return resolve("Created");
+      } catch (e) {
+        return reject("File Access Error");
+      }
+    });
   }
 
   static update (id, title, type, date, category, content, edit) {
-
-    let m = date.match(/^(\d{4})-([0-1]\d)-([0-3]\d) ([0-2]\d):([0-5]\d):([0-5]\d)$/);
-    let year = m[1];
-    let month = m[2];
-    let path = `./database/articles/${year}/${month}/${id}.md`;
-    try {
-      fs.accessSync(path);
-      fs.writeFileSync(
-        path,
-        `title: ${title}\ntype: ${type}\ndate: ${date}\ncategory: ${category}\nedit: ${edit}\n---\n\n${content}`,
-        "utf8"
-      );
-      this.init();
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return new Promise((resolve, reject) => {
+      const m = date.match(/^(\d{4})-([0-1]\d)-([0-3]\d) ([0-2]\d):([0-5]\d):([0-5]\d)$/);
+      const year = m[1];
+      const month = m[2];
+      const path = `./database/articles/${year}/${month}/${id}.md`;
+      try {
+        fs.accessSync(path);
+        fs.writeFileSync(
+          path,
+          `title: ${title}\ntype: ${type}\ndate: ${date}\ncategory: ${category}\nedit: ${edit}\n---\n\n${content}`,
+          "utf8"
+        );
+        this.init();
+        return resolve("Updated");
+      } catch (e) {
+        return reject("File Access Error");
+      }
+    });
   }
 
   static remove (id) {
-    let m = id.match(/^(\d{4})([0-1][0-9])([0-3][0-9])(\d\d)$/);
-    let year = m[1];
-    let month = m[2];
-    let path = `./database/articles/${year}/${month}/${id}.md`;
-    try {
-      fs.accessSync(path);
-      fs.unlinkSync(path);
-      this.init();
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return new Promise((resolve, reject) => {
+      const m = id.match(/^(\d{4})([0-1][0-9])([0-3][0-9])(\d\d)$/);
+      const year = m[1];
+      const month = m[2];
+      const path = `./database/articles/${year}/${month}/${id}.md`;
+      try {
+        fs.accessSync(path);
+        fs.unlinkSync(path);
+        this.init();
+        return resolve("Removed");
+      } catch (e) {
+        return reject("File Access Error");
+      }
+    });
   }
 
   static upload (name, date, file) {
+    return new Promise((resolve, reject) => {
+      const m = date.match(/^(\d{4})-([0-1]\d)-([0-3]\d) ([0-2]\d):([0-5]\d):([0-5]\d)$/);
+      const year = m[1];
+      const month = m[2];
 
-    let m = date.match(/^(\d{4})-([0-1]\d)-([0-3]\d) ([0-2]\d):([0-5]\d):([0-5]\d)$/);
-    let year = m[1];
-    let month = m[2];
+      existsOrMkdir("./database");
+      existsOrMkdir("./database/uploads");
+      existsOrMkdir(`./database/uploads/${year}`);
+      existsOrMkdir(`./database/uploads/${year}/${month}`);
 
-    existsOrMkdir("./database");
-    existsOrMkdir("./database/uploads");
-    existsOrMkdir(`./database/uploads/${year}`);
-    existsOrMkdir(`./database/uploads/${year}/${month}`);
+      let path = `./database/uploads/${year}/${month}/${name}`;
 
-    let path = `./database/uploads/${year}/${month}/${name}`;
+      if ( exists(path) ) {
+        return reject("File Exists");
+      }
 
-    if ( exists(path) ) {
-      return false;
-    }
+      let buf = new Buffer(file, "base64");
 
-    let buf = new Buffer(file, "base64");
-
-    try {
-      fs.writeFileSync(path, buf);
-      return path.substr(10); // 10 = length of "./database"
-    } catch (e) {
-      return false;
-    }
-
+      try {
+        fs.writeFileSync(path, buf);
+        return resolve(path.substr(10)); // 10 = length of "./database"
+      } catch (e) {
+        return reject("File Writing Error");
+      }
+    });
   }
 
 };

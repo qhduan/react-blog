@@ -8,12 +8,13 @@ $break-large: 1200px;
 }
 
 html, body {
-  font-family: PTserif, serif;
+  font-family: PTserif,"Microsoft Yahei","Hiragino Sans GB",Helvetica,"Helvetica Neue","微软雅黑",Tahoma,Arial,sans-serif;
   font-size:1em;
 }
 
 img {
-  max-width: 100%;
+  max-width: 60%;
+  margin-left: 20%;
 }
 
 hr {
