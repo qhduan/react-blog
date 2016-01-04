@@ -13,6 +13,3 @@ redux和与之匹配的系列实在是太复杂了，不过总体来说，至少
 
 个人理解redux，action算M，reducer算C，当然V就是react的component了
 
-## demo
-
-http://qhduan.com
