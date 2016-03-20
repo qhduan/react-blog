@@ -1,7 +1,7 @@
 
 # react-blog
 
-使用react, redux, react-router, redux-simple-router, webpack, babel等开发
+使用react, redux, react-router, react-router-redux, webpack, babel等开发
 
 ## 坑
 

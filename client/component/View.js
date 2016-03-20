@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Link } from "react-router";
-import { pushPath } from "redux-simple-router";
+import { pushPath } from "react-router-redux";
 
 import { fetchData, removeArticle } from "../actions/view.js";
 import Loading from "../component/Loading.js";

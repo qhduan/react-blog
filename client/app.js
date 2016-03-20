@@ -6,21 +6,20 @@ import thunk from "redux-thunk";
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
 import { Router, Route, IndexRoute, browserHistory } from "react-router";
-import { syncHistory, routeReducer } from "redux-simple-router";
+import { syncHistoryWithStore, routerReducer } from "react-router-redux";
 
 import reducers from "./reducers";
 
 const reducer = combineReducers(Object.assign({}, reducers, {
-  routing: routeReducer
+  routing: routerReducer
 }));
 
-const reduxRouterMiddleware = syncHistory(browserHistory);
 const createStoreWithMiddleware = applyMiddleware(
-    thunk,
-    reduxRouterMiddleware
+    thunk
 )(createStore);
 const store = createStoreWithMiddleware(reducer);
-reduxRouterMiddleware.listenForReplays(store);
+
+const history = syncHistoryWithStore(browserHistory, store)
 
 class App extends Component {
   render () {
@@ -40,7 +39,7 @@ import "./css/Global.scss";
 
 ReactDOM.render(
   <Provider store={ store }>
-    <Router history={ browserHistory }>
+    <Router history={ history }>
       <Route path="/" component={ App }>
         <IndexRoute component={ Home } />
         <Route path="/category/:category/page/:page/" component={ Home } />
