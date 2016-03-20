@@ -5,9 +5,8 @@ import ReactDOM from "react-dom";
 import thunk from "redux-thunk";
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
-import { Router, Route, IndexRoute } from "react-router";
-import { createHistory } from "history";
-import { syncReduxAndRouter, routeReducer } from "redux-simple-router";
+import { Router, Route, IndexRoute, browserHistory } from "react-router";
+import { syncHistory, routeReducer } from "redux-simple-router";
 
 /*
  * 初始化redux调试工具
@@ -22,23 +21,23 @@ const DevTools = createDevTools(
   </DockMonitor>
 );
 
+const enhancer = compose(
+    DevTools.instrument()
+);
+
 import reducers from "./reducers";
 
 const reducer = combineReducers(Object.assign({}, reducers, {
   routing: routeReducer
 }));
 
-const createStoreWithMiddleware = compose(
-  applyMiddleware(
-    thunk
-  ),
-  DevTools.instrument()
+const reduxRouterMiddleware = syncHistory(browserHistory);
+const createStoreWithMiddleware = applyMiddleware(
+    thunk,
+    reduxRouterMiddleware
 )(createStore);
-
-const store = createStoreWithMiddleware(reducer);
-const history = createHistory();
-
-syncReduxAndRouter(history, store);
+const store = createStoreWithMiddleware(reducer, enhancer);
+reduxRouterMiddleware.listenForReplays(store);
 
 class App extends Component {
   render () {
@@ -59,7 +58,7 @@ import "./css/Global.scss";
 
 ReactDOM.render(
   <Provider store={ store }>
-    <Router history={ history }>
+    <Router history={ browserHistory }>
       <Route path="/" component={ App }>
         <IndexRoute component={ Home } />
         <Route path="/category/:category/page/:page/" component={ Home } />

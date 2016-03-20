@@ -1,4 +1,4 @@
 
 require("babel-register");
 
-require("./server.js");
+require("./server");

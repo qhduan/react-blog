@@ -1,29 +1,37 @@
 "use strict";
 
-import React from "react";
+import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import thunk from "redux-thunk";
-import { createStore, combineReducers, applyMiddleware } from "redux";
+import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
-import { Router, Route, IndexRoute } from "react-router";
-import { createHistory } from "history";
-import { syncReduxAndRouter, routeReducer } from "redux-simple-router";
+import { Router, Route, IndexRoute, browserHistory } from "react-router";
+import { syncHistory, routeReducer } from "redux-simple-router";
+
 import reducers from "./reducers";
 
 const reducer = combineReducers(Object.assign({}, reducers, {
   routing: routeReducer
 }));
 
+const reduxRouterMiddleware = syncHistory(browserHistory);
 const createStoreWithMiddleware = applyMiddleware(
-  thunk
+    thunk,
+    reduxRouterMiddleware
 )(createStore);
-
 const store = createStoreWithMiddleware(reducer);
-const history = createHistory();
+reduxRouterMiddleware.listenForReplays(store);
 
-syncReduxAndRouter(history, store);
+class App extends Component {
+  render () {
+    return (
+      <div>
+        { this.props.children }
+      </div>
+    );
+  }
+}
 
-import App    from "./containers/App.js";
 import Home   from "./component/Home.js";
 import View   from "./component/View.js";
 import Create from "./component/Create.js";
@@ -32,7 +40,7 @@ import "./css/Global.scss";
 
 ReactDOM.render(
   <Provider store={ store }>
-    <Router history={ history }>
+    <Router history={ browserHistory }>
       <Route path="/" component={ App }>
         <IndexRoute component={ Home } />
         <Route path="/category/:category/page/:page/" component={ Home } />

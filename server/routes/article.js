@@ -2,9 +2,9 @@
 
 import fs from"fs";
 import express from "express";
-import database from "../component/database";
-import secret from "../component/secret";
-import config from "../config";
+import database from "../../component/database";
+import secret from "../../component/secret";
+import config from "../../config";
 
 let article = express.Router();
 

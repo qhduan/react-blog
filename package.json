@@ -4,10 +4,8 @@
   "version": "0.0.2",
   "scripts": {
     "build": "webpack --config ./config/webpack.config.prod.js",
-    "dev": "NODE_ENV=development node app",
-    "development": "NODE_ENV=development node app",
-    "prod": "NODE_ENV=production node app",
-    "production": "NODE_ENV=production node app"
+    "test": "NODE_ENV=development node app",
+    "start": "NODE_ENV=production node app"
   },
   "author": {
     "name": "QHDuan",
@@ -30,7 +28,7 @@
     "babel-loader": "^6.2.0",
     "css-loader": "^0.23.0",
     "highlight.js": "^9.0.0",
-    "history": "^1.17.0",
+    "history": "^2.0.1",
     "isomorphic-fetch": "^2.2.0",
     "katex": "^0.5.1",
     "marked": "^0.3.5",
@@ -39,13 +37,13 @@
     "react-bootstrap": "^0.28.1",
     "react-dom": "^0.14.3",
     "react-redux": "^4.0.6",
-    "react-router": "^1.0.3",
+    "react-router": "^2.0.1",
     "redux": "^3.0.5",
     "redux-devtools": "^3.0.1",
     "redux-devtools-dock-monitor": "^1.0.1",
     "redux-devtools-log-monitor": "^1.0.1",
-    "redux-simple-router": "^1.0.2",
-    "redux-thunk": "^1.0.3",
+    "redux-simple-router": "^2.0.4",
+    "redux-thunk": "^2.0.1",
     "sass-loader": "^3.1.2",
     "style-loader": "^0.13.0",
     "webpack": "^1.12.9",
