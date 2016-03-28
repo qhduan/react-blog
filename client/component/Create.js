@@ -4,7 +4,7 @@ import React, { Component, PropTypes } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Link } from "react-router";
-import { pushPath } from "react-router-redux";
+import { push } from "react-router-redux";
 
 import {
   createAttribute,
@@ -12,7 +12,7 @@ import {
   createUpload } from "../actions/create.js";
 import Loading from "../component/Loading.js";
 import Alert from "../component/Alert.js";
-import "../css/Create.scss";
+import "../scss/Create.scss";
 
 class Create extends Component {
 
@@ -29,7 +29,7 @@ class Create extends Component {
         message: nextProps.alertMsg,
         onclose: () => {
           if (nextProps.alertMsg.match(/Created/i)) {
-            dispatch(pushPath("/"));
+            dispatch(push("/"));
           }
         }
       });
@@ -70,42 +70,86 @@ class Create extends Component {
         </header>
         <section>
           <label htmlFor="title">Title:</label>
-          <input onChange={ event => { dispatch(createAttribute("title", event.target.value)); } } value={ title } id="title" type="text" />
+          <input
+            autoFocus
+            onChange={event => dispatch(createAttribute("title", event.target.value))}
+            value={title}
+            id="title"
+            type="text"
+          />
         </section>
         <section>
           <label htmlFor="type">Type:</label>
-          <select onChange={ event => { dispatch(createAttribute("type", event.target.value)); } } value={ type } id="type" >
+          <select
+            onChange={event => dispatch(createAttribute("type", event.target.value))}
+            value={type}
+            id="type"
+          >
             <option value="post">post</option>
             <option value="article">article</option>
           </select>
         </section>
         <section>
           <label htmlFor="date">Date:</label>
-          <input readOnly value={ date } id="date" type="text" />
+          <input
+            readOnly
+            value={date}
+            id="date"
+            type="text"
+          />
         </section>
         <section>
           <label htmlFor="category">Category:</label>
-          <input onChange={ event => { dispatch(createAttribute("category", event.target.value)); } } value={ category } id="category" type="text" />
+          <input
+            onChange={event => dispatch(createAttribute("category", event.target.value))}
+            value={category}
+            id="category"
+            type="text"
+          />
         </section>
         <section>
           <label htmlFor="content">Content:</label>
-          <textarea onChange={ event => { dispatch(createAttribute("content", event.target.value)); } } value={ content } id="content" ></textarea>
+          <textarea
+            onChange={event => dispatch(createAttribute("content", event.target.value))}
+            value={content}
+            id="content"
+          >
+          </textarea>
         </section>
         <section>
           <label htmlFor="view">View:</label>
-          <div dangerouslySetInnerHTML={ { __html: view } } id="view" ></div>
+          <div
+            dangerouslySetInnerHTML={ { __html: view } }
+            id="view"
+          >
+          </div>
         </section>
         <section>
           <label htmlFor="file">Upload:</label>
-          <input onChange={ event => { this.updateFile(event) } } id="file" type="file" />
-          <button onClick={ event => { this.upload(event) } } >Upload</button>
+          <input
+            onChange={event => this.updateFile(event)}
+            id="file"
+            type="file"
+          />
+          <button
+            onClick={event => this.upload(event)}
+          >
+            Upload
+          </button>
         </section>
         <section>
           <label htmlFor="password">Password:</label>
-          <input onChange={ event => { dispatch(createAttribute("password", event.target.value)); } } value={ password } id="password" type="password" />
+          <input
+            onChange={event => dispatch(createAttribute("password", event.target.value))}
+            value={password}
+            id="password"
+            type="password"
+          />
         </section>
         <section>
-          <button onClick={ event => { dispatch(createSubmit({title, type, date, category, content, password})); } } >
+          <button
+            onClick={ event => dispatch(createSubmit({title, type, date, category, content, password}))}
+          >
             Submit
           </button>
         </section>
@@ -127,31 +171,4 @@ Create.propTypes = {
   dispatch:   PropTypes.func.isRequired
 };
 
-function mapStateToProps (state) {
-  const { create } = state;
-  const {
-    isFetching,
-    alertMsg,
-    title,
-    type,
-    date,
-    category,
-    content,
-    view,
-    password
-  } = create;
-
-  return {
-    isFetching,
-    alertMsg,
-    title,
-    type,
-    date,
-    category,
-    content,
-    view,
-    password
-  }
-}
-
-export default connect(mapStateToProps)(Create);
+export default connect(state => state.create)(Create);

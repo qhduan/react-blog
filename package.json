@@ -4,8 +4,8 @@
   "version": "0.0.2",
   "scripts": {
     "build": "webpack --config ./config/webpack.config.prod.js",
-    "test": "NODE_ENV=development node app",
-    "start": "NODE_ENV=production node app"
+    "test": "NODE_ENV=development node blog",
+    "start": "NODE_ENV=production node blog"
   },
   "author": {
     "name": "QHDuan",
@@ -37,6 +37,7 @@
     "react-dom": "^0.14.3",
     "react-redux": "^4.0.6",
     "react-router": "^2.0.1",
+    "react-router-redux": "^4.0.0",
     "redux": "^3.0.5",
     "redux-devtools": "^3.0.1",
     "redux-devtools-dock-monitor": "^1.0.1",
@@ -44,10 +45,10 @@
     "redux-thunk": "^2.0.1",
     "sass-loader": "^3.1.2",
     "style-loader": "^0.13.0",
+    "url-loader": "^0.5.7",
     "webpack": "^1.12.9",
     "webpack-dev-middleware": "^1.4.0",
-    "webpack-hot-middleware": "^2.6.0",
-    "react-router-redux": "^4.0.0"
+    "webpack-hot-middleware": "^2.6.0"
   },
   "readme": "README.md",
   "license": "GPL-3.0",

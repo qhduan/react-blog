@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from "react";
 
-import "../css/Prompt.scss";
+import "../scss/Prompt.scss";
 
 export default class Prompt extends Component {
   constructor (props) {

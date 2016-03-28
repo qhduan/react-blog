@@ -5,13 +5,13 @@ import React, { Component, PropTypes } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Link } from "react-router";
-import { pushPath } from "react-router-redux";
+import { push } from "react-router-redux";
 
 import { fetchData, removeArticle } from "../actions/view.js";
 import Loading from "../component/Loading.js";
 import Alert from "../component/Alert.js";
 import Prompt from "../component/Prompt.js";
-import "../css/View.scss";
+import "../scss/View.scss";
 
 class View extends Component {
 
@@ -30,7 +30,7 @@ class View extends Component {
       this.refs.alert.show({
         message: nextProps.alertMsg,
         onclose: () => {
-          dispatch(pushPath("/"));
+          dispatch(push("/"));
         }
       });
     }
@@ -85,27 +85,4 @@ View.propTypes = {
   content:    PropTypes.string.isRequired
 };
 
-function mapStateToProps (state) {
-  const { view } = state;
-  const {
-    isFetching,
-    alertMsg,
-    title,
-    type,
-    date,
-    category,
-    content
-  } = view;
-
-  return {
-    isFetching,
-    alertMsg,
-    title,
-    type,
-    date,
-    category,
-    content
-  }
-}
-
-export default connect(mapStateToProps)(View);
+export default connect(state => state.view)(View);

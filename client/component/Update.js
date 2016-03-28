@@ -4,7 +4,7 @@ import React, { Component, PropTypes } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Link } from "react-router";
-import { pushPath } from "react-router-redux";
+import { push } from "react-router-redux";
 
 import {
   fetchData,
@@ -13,7 +13,7 @@ import {
   updateUpload } from "../actions/update.js";
 import Loading from "../component/Loading.js";
 import Alert from "../component/Alert.js";
-import "../css/Update.scss";
+import "../scss/Update.scss";
 
 class Update extends Component {
 
@@ -35,7 +35,7 @@ class Update extends Component {
         message: nextProps.alertMsg,
         onclose: () => {
           if (nextProps.alertMsg.match(/Updated/i)) {
-            dispatch(pushPath("/view/" + routeParams.id));
+            dispatch(push("/view/" + routeParams.id));
           }
         }
       });
@@ -76,11 +76,21 @@ class Update extends Component {
         </header>
         <section>
           <label htmlFor="title">Title:</label>
-          <input onChange={ event => { dispatch(updateAttribute("title", event.target.value)); } } value={ title } id="title" type="text" />
+          <input
+            autoFocus
+            onChange={event => dispatch(updateAttribute("title", event.target.value))}
+            value={title}
+            id="title"
+            type="text"
+          />
         </section>
         <section>
           <label htmlFor="type">Type:</label>
-          <select onChange={ event => { dispatch(updateAttribute("type", event.target.value)); } } value={ type } id="type" >
+          <select
+            onChange={event => dispatch(updateAttribute("type", event.target.value))}
+            value={type}
+            id="type"
+          >
             <option value="post">post</option>
             <option value="article">article</option>
           </select>
@@ -95,27 +105,51 @@ class Update extends Component {
         </section>
         <section>
           <label htmlFor="category">Category:</label>
-          <input onChange={ event => { dispatch(updateAttribute("category", event.target.value)); } } value={ category } id="category" type="text" />
+          <input
+            onChange={event => dispatch(updateAttribute("category", event.target.value))}
+            value={category}
+            id="category"
+            type="text"
+          />
         </section>
         <section>
           <label htmlFor="content">Content:</label>
-          <textarea onChange={ event => { dispatch(updateAttribute("content", event.target.value)); } } value={ content } id="content" ></textarea>
+          <textarea
+            onChange={event => dispatch(updateAttribute("content", event.target.value))}
+            value={content}
+            id="content"
+          >
+          </textarea>
         </section>
         <section>
           <label htmlFor="view">View:</label>
-          <div dangerouslySetInnerHTML={ { __html: view } } id="view" ></div>
+          <div
+            dangerouslySetInnerHTML={ { __html: view } }
+            id="view"
+          >
+          </div>
         </section>
         <section>
           <label htmlFor="file">Upload:</label>
-          <input onChange={ event => { this.updateFile(event) } } id="file" type="file" />
-          <button onClick={ event => { this.upload(event) } } >Upload</button>
+          <input
+            onChange={event => this.updateFile(event)}
+            id="file"
+            type="file"
+          />
+          <button onClick={event => this.upload(event)} >Upload</button>
         </section>
         <section>
           <label htmlFor="password">Password:</label>
-          <input onChange={ event => { dispatch(updateAttribute("password", event.target.value)); } } value={ password } id="password" type="password" />
+          <input
+            onChange={event => dispatch(updateAttribute("password", event.target.value))}
+            value={password}
+            id="password"
+            type="password"
+          />
         </section>
         <section>
-          <button onClick={ event => { dispatch(updateSubmit({ id: routeParams.id, title, type, date, edit, category, content, password})); } } >
+          <button
+            onClick={event => dispatch(updateSubmit({ id: routeParams.id, title, type, date, edit, category, content, password}))} >
             Submit
           </button>
         </section>
@@ -139,35 +173,4 @@ Update.propTypes = {
   dispatch:   PropTypes.func.isRequired
 };
 
-function mapStateToProps (state) {
-  const { update } = state;
-  const {
-    isFetching,
-    alertMsg,
-    id,
-    title,
-    type,
-    date,
-    edit,
-    category,
-    content,
-    view,
-    password
-  } = update;
-
-  return {
-    isFetching,
-    alertMsg,
-    id,
-    title,
-    type,
-    date,
-    edit,
-    category,
-    content,
-    view,
-    password
-  }
-}
-
-export default connect(mapStateToProps)(Update);
+export default connect(state => state.update)(Update);

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from "react";
 
-import "../css/Loading.scss";
+import "../scss/Loading.scss";
 
 export default class Loading extends Component {
   constructor (props) {

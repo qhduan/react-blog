@@ -6,7 +6,7 @@ import thunk from "redux-thunk";
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
 import { Router, Route, IndexRoute, browserHistory } from "react-router";
-import { syncHistoryWithStore, routerReducer } from "react-router-redux";
+import { syncHistoryWithStore, routerReducer, routerMiddleware } from "react-router-redux";
 
 import reducers from "./reducers";
 
@@ -15,32 +15,25 @@ const reducer = combineReducers(Object.assign({}, reducers, {
 }));
 
 const createStoreWithMiddleware = applyMiddleware(
-    thunk
+    thunk,
+    routerMiddleware(browserHistory) // 加入了这个之后才可以用dispatch(push("url"))
 )(createStore);
 const store = createStoreWithMiddleware(reducer);
+const history = syncHistoryWithStore(browserHistory, store);
 
-const history = syncHistoryWithStore(browserHistory, store)
-
-class App extends Component {
-  render () {
-    return (
-      <div>
-        { this.props.children }
-      </div>
-    );
-  }
-}
-
+import "./css/katex.min.css";
+import "./css/hljs.css";
+import "./css/font.ttf";
 import Home   from "./component/Home.js";
 import View   from "./component/View.js";
 import Create from "./component/Create.js";
 import Update from "./component/Update.js";
-import "./css/Global.scss";
+import "./scss/Global.scss";
 
 ReactDOM.render(
   <Provider store={ store }>
     <Router history={ history }>
-      <Route path="/" component={ App }>
+      <Route path="/">
         <IndexRoute component={ Home } />
         <Route path="/category/:category/page/:page/" component={ Home } />
         <Route path="/category/:category/page/:page" component={ Home } />

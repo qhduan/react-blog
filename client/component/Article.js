@@ -8,7 +8,7 @@ import { Link } from "react-router";
 import "isomorphic-fetch";
 import parseArticle from "../../component/parseArticle.js";
 import markdown from "../../component/markdown.js";
-import "../css/Article.scss";
+import "../scss/Article.scss";
 
 export default class Article extends Component {
 

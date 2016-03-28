@@ -9,6 +9,10 @@ module.exports = {
   ],
   module: {
     loaders: [
+      {
+        test: /\.(woff2?|ttf|eot|svg)$/,
+        loader: "url?limit=1000000"
+      },
       { // babel
         test: /\.js$|\.jsx$/,
         exclude: /node_modules/,

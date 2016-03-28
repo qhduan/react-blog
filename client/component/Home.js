@@ -5,12 +5,11 @@ import React, { Component, PropTypes } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Link } from "react-router";
-import { pushPath } from "react-router-redux";
 
 import { fetchData } from "../actions/home.js";
 import Loading from "../component/Loading.js";
 import Article from "../component/Article.js";
-import "../css/Home.scss";
+import "../scss/Home.scss";
 
 
 class Home extends Component {
@@ -47,55 +46,72 @@ class Home extends Component {
     document.title = title;
     return (
       <div className="home container">
-        <div className="scroll">
-          <a onClick={ event => { event.preventDefault(); window.scroll(0, 0); } } href="">↑</a>
-          <a onClick={ event => { event.preventDefault(); window.scroll(0, 9002); } } href="">↓</a>
-        </div>
         <Loading isFetching={ isFetching } />
         <header>
           <h1><Link to="/">{ title }</Link></h1>
         </header>
 
         <nav>
-          { articles.map((element, index) => {
-            return (
-              <Link
-                key={ index }
-                to={ "/view/" + element[0] }>
-                { element[1] }
-              </Link>
-            );
-          }) }
+          {
+            articles.map((element, index) => {
+              return (
+                <Link
+                  key={ index }
+                  to={ "/view/" + element[0] }>
+                  { element[1] }
+                </Link>
+              );
+            })
+          }
         </nav>
 
-        { category.length ? (
+        {
+          category.length ? (
             <div className="category-hint">
               Current category is: { category }.&nbsp;
               <Link to="/">Cancel</Link>
             </div>
-          ) : "" }
+          ) : ""
+        }
 
         <section className="articles-list">
 
-          { posts.map((element, index) => {
-            const id = element[0];
-            const title = element[1];
-            return (<Article key={ index } id={ id } title={ title } timeout={ index * 200 } />);
-          }) }
+          <div className="scroll scroll-down">
+            <a onClick={ event => { event.preventDefault(); window.scroll(0, 9002); } } href="">↓</a>
+          </div>
+
+          <div className="scroll scroll-up">
+            <a onClick={ event => { event.preventDefault(); window.scroll(0, 0); } } href="">↑</a>
+          </div>
+
+          {
+            posts.map((element, index) => {
+              const id = element[0];
+              const title = element[1];
+              return (
+                <Article
+                  key={index}
+                  id={id}
+                  title={title}
+                  timeout={index * 200}
+                />
+              );
+            })
+          }
 
           <div className="post-footer">
-            <span>{ page } / { maxPage }</span>
+            <span>{page} / {maxPage}</span>
             <span>
               <Link
-                onClick={ event => { window.scroll(0, 0); } }
-                to={ prevPage }>
+                onClick={event => window.scroll(0, 0)}
+                to={prevPage}>
                 Prev
               </Link>
             </span>
             <span>
               <Link
-                onClick={ event => { window.scroll(0, 0); } }
-                to={ nextPage }>
+                onClick={event => window.scroll(0, 0)}
+                to={nextPage}>
                 Next
               </Link>
             </span>
@@ -104,16 +120,18 @@ class Home extends Component {
 
         <section className="categories-list">
           Categories:
-          { categories.map((element, index) => {
-            return (
-              <Link
-                key={ index }
-                onClick={ event => { window.scroll(0, 0); } }
-                to={ "/category/" + element }>
-                { element }
-              </Link>
-            );
-          }) }
+          {
+            categories.map((element, index) => {
+              return (
+                <Link
+                  key={index}
+                  onClick={event => window.scroll(0, 0)}
+                  to={"/category/" + element}>
+                  {element}
+                </Link>
+              );
+            })
+          }
         </section>
 
         <footer>
@@ -137,29 +155,4 @@ Home.propTypes = {
   dispatch:   PropTypes.func.isRequired
 };
 
-function mapStateToProps (state) {
-  const { home } = state;
-  const {
-    isFetching,
-    title,
-    category,
-    categories,
-    articles,
-    posts,
-    page,
-    maxPage
-  } = home;
-
-  return {
-    isFetching,
-    title,
-    category,
-    categories,
-    articles,
-    posts,
-    page,
-    maxPage
-  }
-}
-
-export default connect(mapStateToProps)(Home);
+export default connect(state => state.home)(Home);
