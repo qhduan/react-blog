@@ -1,4 +1,4 @@
-import { UPDATE_PATH } from "react-router-redux";
+"use strict";
 
 import {
   REQUEST,

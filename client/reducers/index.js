@@ -1,3 +1,4 @@
+"use strict";
 
 import home from "./home.js";
 import view from "./view.js";

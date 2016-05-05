@@ -1,4 +1,4 @@
-
+"use strict";
 
 import webpack              from "webpack";
 import webpackDevMiddleware from "webpack-dev-middleware";

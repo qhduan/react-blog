@@ -1,3 +1,5 @@
+"use strict";
+
 import "isomorphic-fetch";
 
 export const ATTRIBUTE = "CREATE-ATTRIBUTE";
