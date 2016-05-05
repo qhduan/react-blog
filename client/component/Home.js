@@ -19,8 +19,28 @@ class Home extends Component {
   }
 
   componentDidMount () {
-    const { dispatch } = this.props;
-    dispatch(fetchData());
+    this.update();
+  }
+
+  componentDidUpdate (prevProps) {
+    if (JSON.stringify(prevProps.params) !== JSON.stringify(this.props.params)) {
+      this.update();
+    }
+  }
+
+  update () {
+    let {page, category} = this.props.params;
+    if (typeof category !== "string") {
+      category = "";
+    }
+    if (typeof page === "string" && page.match(/^\d+$/)) {
+      page = Number.parseInt(page);
+    }
+    if (typeof page !== "number" || page < 1) {
+      page = 1;
+    }
+    const {dispatch} = this.props;
+    dispatch(fetchData(page, category));
   }
 
   render () {
@@ -145,6 +165,7 @@ class Home extends Component {
 }
 
 Home.propTypes = {
+  params:     PropTypes.object.isRequired,
   isFetching: PropTypes.bool.isRequired,
   title:      PropTypes.string.isRequired,
   category:   PropTypes.string.isRequired,

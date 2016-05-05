@@ -16,16 +16,6 @@ const initialState = {
   maxPage: 1
 };
 
-function parsePageAndCategory () {
-  let pm = document.URL.match(/\/page\/(\d+)/);
-  let page = pm ? parseInt(pm[1]) : 1;
-  let cm = document.URL.match(/\/category\/([^\/]+)/);
-  let category = cm ? cm[1] : "";
-  return {
-    page, category
-  };
-}
-
 function updatePath (state, action) {
   if ( !state.data ) {
     return state;
@@ -54,8 +44,7 @@ function updatePath (state, action) {
 }
 
 function homeReceive (state, action) {
-  let data = action.data;
-  const { page, category } = parsePageAndCategory();
+  let {data, page, category} = action;
   data.articles.sort((a, b) => {
     if (a[2] > b[2]) return -1;
     else if (a[2] < b[2]) return 1;

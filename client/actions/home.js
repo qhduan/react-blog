@@ -9,14 +9,14 @@ function requestData () {
   }
 }
 
-function receiveData (data) {
+function receiveData (data, page, category) {
   return {
     type: RECEIVE,
-    data
+    data, page, category
   }
 }
 
-export function fetchData () {
+export function fetchData (page, category) {
   return dispatch => {
     dispatch(requestData());
     fetch("/index.json")
@@ -26,7 +26,13 @@ export function fetchData () {
         const parseArticle = require("../../component/parseArticle.js");
         const markdown = require("../../component/markdown.js");
         let promies = [];
-        for (let p of json.articles) {
+        const pageCount = json.pageCount;
+        let articles = json.articles;
+        if (category && category.length) {
+          articles = articles.filter(e => e[4] == category);
+        }
+        articles = articles.slice((page - 1) * pageCount, page * pageCount);
+        for (let p of articles) {
           const id = p[0];
           const m = id.match(/(\d{4})(\d{2})(\d{4})/);
           const year = m[1];
@@ -42,7 +48,7 @@ export function fetchData () {
           }));
         }
         Promise.all(promies)
-        .then(() => dispatch(receiveData(json)));
+        .then(() => dispatch(receiveData(json, page, category)));
       });
     });
   };
