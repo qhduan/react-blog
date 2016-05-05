@@ -47,7 +47,7 @@ class Update extends Component {
   }
 
   upload (event) {
-    const { date, password, dispatch } = this.props;
+    const { dispatch, date, password, content } = this.props;
     if (this.file) {
       const name = this.file.name;
       let reader = new FileReader();
@@ -56,7 +56,7 @@ class Update extends Component {
           const pos = reader.result.indexOf("base64,");
           const file = reader.result.substr(pos + 7);
           dispatch(updateUpload({
-            name, file, date, password
+            name, file, date, password, content
           }));
         }
       };

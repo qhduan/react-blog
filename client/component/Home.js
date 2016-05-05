@@ -88,12 +88,13 @@ class Home extends Component {
             posts.map((element, index) => {
               const id = element[0];
               const title = element[1];
+              const content = element[5];
               return (
                 <Article
                   key={index}
                   id={id}
                   title={title}
-                  timeout={index * 200}
+                  content={content}
                 />
               );
             })

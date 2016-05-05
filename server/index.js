@@ -8,7 +8,7 @@ import bodyParser from "body-parser";
 import compression from "compression";
 
 // 初始化文章数据库
-import database from "../component/database.js";
+import database from "./database.js";
 database.init();
 
 let app = express();

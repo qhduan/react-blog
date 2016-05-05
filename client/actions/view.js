@@ -1,6 +1,4 @@
 import "isomorphic-fetch";
-import parseArticle from "../../component/parseArticle.js";
-import secret from "../../component/secret.js";
 
 export const REQUEST = "VIEW-REQUEST";
 export const RECEIVE = "VIEW-RECEIVE";
@@ -26,10 +24,18 @@ export function fetchData (id) {
   const month = m[2];
   return dispatch => {
     dispatch(requestData());
-    return fetch(`/articles/${year}/${month}/${id}.md`)
+    require.ensure([], require => {
+      const parseArticle = require("../../component/parseArticle.js");
+      const markdown = require("../../component/markdown.js");
+      fetch(`/articles/${year}/${month}/${id}.md`)
       .then(response => response.text())
       .then(data => parseArticle(data))
+      .then(data => {
+        data.markdowned = markdown(data.content);
+        return data;
+      })
       .then(data => dispatch(receiveData(data)));
+    });
   };
 }
 
@@ -49,7 +55,9 @@ function removedArticle (ret) {
 export function removeArticle (id, password) {
   return dispatch => {
     dispatch(removingArticle());
-    return fetch("/article/remove", {
+    require.ensure([], require => {
+      const secret = require("../../component/secret.js");
+      fetch("/article/remove", {
         method: "post",
         headers: {
           "Accept": "application/json",
@@ -61,5 +69,6 @@ export function removeArticle (id, password) {
       })
       .then(response => response.json())
       .then(ret => dispatch(removedArticle(ret)));
+    });
   };
 }

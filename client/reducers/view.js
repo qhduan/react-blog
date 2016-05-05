@@ -6,8 +6,6 @@ import {
   REMOVING,
   REMOVED } from "../actions/view.js";
 
-import markdown from "../../component/markdown.js";
-
 const initialState = {
   data: {},
   alertMsg: "",
@@ -28,7 +26,7 @@ function viewReceive (state, action) {
     type:       data.type,
     date:       data.date,
     category:   data.category,
-    content:    markdown(data.content)
+    content:    data.markdowned
   });
 }
 

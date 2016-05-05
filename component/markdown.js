@@ -28,7 +28,7 @@ marked.setOptions({
   }
 });
 
-export default function markdown (source) {
+function markdown (source) {
 
     var converted = source;
     var mathArray = [];
@@ -67,3 +67,5 @@ export default function markdown (source) {
 
     return converted;
 };
+
+module.exports = markdown;

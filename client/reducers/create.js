@@ -7,8 +7,6 @@ import {
   UPLOADING,
   UPLOADED } from "../actions/create.js";
 
-import markdown from "../../component/markdown.js";
-
 const initialState = {
   isFetching: false,
   title: "",
@@ -27,7 +25,7 @@ export default function create (state = initialState, action) {
     case ATTRIBUTE:
       if (action.attribute == "content") {
         data.content = action.value;
-        data.view = markdown(action.value);
+        data.view = action.markdowned;
       } else {
         data[action.attribute] = action.value;
       }
@@ -44,17 +42,8 @@ export default function create (state = initialState, action) {
       return Object.assign({}, state, data);
     case UPLOADED:
       data.isFetching = false;
-      if (action.ret.success) {
-        const url = action.ret.success;
-        let add = `[${url}](${url})`;
-        if (url.match(/\.jpg$|\.png$|\.gif$|\.bmp$/ig)) {
-          add = "!" + add;
-        }
-        data.content = `${state.content}\n\n${add}\n\n`;
-        data.view = markdown(data.content);
-      } else {
-        data.alertMsg = (action.ret.message || "Unknown Error") + `[${Date.now()}]`;
-      }
+      data.content = action.content;
+      data.view = action.markdowned;
       return Object.assign({}, state, data);
     default:
       return state;

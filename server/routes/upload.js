@@ -2,8 +2,8 @@
 
 import fs from"fs";
 import express from "express";
-import database from "../../component/database";
-import secret from "../../component/secret";
+import database from "..//database.js";
+import secret from "../../component/secret.js";
 import config from "../../config";
 
 let upload = express.Router();

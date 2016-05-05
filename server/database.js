@@ -1,7 +1,7 @@
 "use strict";
 
 import fs from "fs";
-import parseArticle from "./parseArticle.js";
+import parseArticle from "../component/parseArticle.js";
 import config from "../config/index.js";
 
 /*

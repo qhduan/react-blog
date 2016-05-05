@@ -21,9 +21,6 @@ const createStoreWithMiddleware = applyMiddleware(
 const store = createStoreWithMiddleware(reducer);
 const history = syncHistoryWithStore(browserHistory, store);
 
-import "./css/katex.min.css";
-import "./css/hljs.css";
-import "./css/font.ttf";
 import Home   from "./component/Home.js";
 import View   from "./component/View.js";
 import Create from "./component/Create.js";

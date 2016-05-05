@@ -2,7 +2,7 @@
 
 import fs from"fs";
 import express from "express";
-import database from "../../component/database";
+import database from "../database";
 import secret from "../../component/secret";
 import config from "../../config";
 

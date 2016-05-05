@@ -1,6 +1,4 @@
 import "isomorphic-fetch";
-import parseArticle from "../../component/parseArticle.js";
-import secret from "../../component/secret.js";
 
 export const REQUEST = "UPDATE-REQUEST";
 export const RECEIVE = "UPDATE-RECEIVE";
@@ -19,7 +17,7 @@ function requestData () {
 function receiveData (data) {
   return {
     type: RECEIVE,
-    data: data
+    data
   }
 }
 
@@ -29,20 +27,37 @@ export function fetchData (id) {
   const month = m[2];
   return dispatch => {
     dispatch(requestData());
-    return fetch(`/articles/${year}/${month}/${id}.md`)
+    require.ensure([], require => {
+      const parseArticle = require("../../component/parseArticle.js");
+      const markdown = require("../../component/markdown.js");
+      fetch(`/articles/${year}/${month}/${id}.md`)
       .then(response => response.text())
       .then(data => parseArticle(data))
+      .then(data => {
+        data.markdowned = markdown(data.content);
+        return data;
+      })
       .then(data => dispatch(receiveData(data)));
+    });
   };
 }
 
 
 export function updateAttribute (attribute, value) {
-  return {
-    type: ATTRIBUTE,
-    attribute: attribute,
-    value: value
-  }
+  return dispatch => {
+    require.ensure([], require => {
+      const markdown = require("../../component/markdown.js");
+      let data = {
+        type: ATTRIBUTE,
+        attribute,
+        value
+      };
+      if (attribute == "content") {
+        data.markdowned = markdown(value);
+      }
+      dispatch(data);
+    });
+  };
 }
 
 function updateSubmitting () {
@@ -61,7 +76,9 @@ function updateSubmitted (ret) {
 export function updateSubmit ({id, title, type, date, edit, category, content, password}) {
   return dispatch => {
     dispatch(updateSubmitting());
-    return fetch("/article/update", {
+    require.ensure([], require => {
+      const secret = require("../../component/secret.js");
+      fetch("/article/update", {
         method: "post",
         headers: {
           "Accept": "application/json",
@@ -75,6 +92,7 @@ export function updateSubmit ({id, title, type, date, edit, category, content, p
       })
       .then(response => response.json())
       .then(ret => dispatch(updateSubmitted(ret)));
+    });
   };
 }
 
@@ -84,17 +102,20 @@ function updateUploading () {
   };
 }
 
-function updateUploaded (ret) {
+function updateUploaded (content, markdowned) {
   return {
     type: UPLOADED,
-    ret: ret
+    content, markdowned
   };
 }
 
 export function updateUpload ({name, file, date, password}) {
   return dispatch => {
     dispatch(updateUploading());
-    return fetch("/upload", {
+    require.ensure([], require => {
+      const secret = require("../../component/secret.js");
+      const markdown = require("../../component/markdown.js");
+      fetch("/upload", {
         method: "post",
         headers: {
           "Accept": "application/json",
@@ -107,6 +128,20 @@ export function updateUpload ({name, file, date, password}) {
         })
       })
       .then(response => response.json())
-      .then(ret => dispatch(updateUploaded(ret)));
+      .then(ret => {
+        if (ret.success) {
+          const url = ret.success;
+          let add = `[${url}](${url})`;
+          if (url.match(/\.jpg$|\.png$|\.gif$|\.bmp$/ig)) {
+            add = "!" + add;
+          }
+          const newContent = `${content}\n\n${add}\n\n`;
+          const markdowned = markdown(newContent);
+          dispatch(updateUploaded(newContent, markdowned));
+        } else {
+          console.error("updateUploaded Error");
+        }
+      });
+    });
   }
 }
