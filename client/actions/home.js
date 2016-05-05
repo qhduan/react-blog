@@ -36,6 +36,11 @@ export function fetchData (page, category) {
         let posts = json.articles.filter(element => {
           return element[3] == "post";
         });
+        posts.sort((a, b) => {
+          if (a[2] > b[2]) return -1;
+          else if (a[2] < b[2]) return 1;
+          return 0;
+        });
         const categories = [[], ...posts].reduce((arr, element) => {
           if (element[4].length && arr.indexOf(element[4]) == -1) {
             arr.push(element[4]);
@@ -66,11 +71,6 @@ export function fetchData (page, category) {
         }
         Promise.all(promies)
         .then(() => {
-          posts.sort((a, b) => {
-            if (a[2] > b[2]) return -1;
-            else if (a[2] < b[2]) return 1;
-            return 0;
-          });
           dispatch(receiveData({title, posts, articles, page, category, categories, maxPage}));
         });
       });
