@@ -70,19 +70,28 @@ class Home extends Component {
           <h1><Link to="/">{ title }</Link></h1>
         </header>
 
-        <nav>
-          {
-            articles.map((element, index) => {
-              return (
-                <Link
-                  key={ index }
-                  to={ "/view/" + element[0] }>
-                  { element[1] }
-                </Link>
-              );
-            })
+        {(() => {
+          if (articles && articles.length) {
+            return (
+              <nav>
+                {
+                  articles.map((element, index) => {
+                    return (
+                      <Link
+                        key={ index }
+                        to={ "/view/" + element[0] }>
+                        { element[1] }
+                      </Link>
+                    );
+                  })
+                }
+              </nav>
+            );
           }
-        </nav>
+          return (
+            <hr />
+          );
+        })()}
 
         {
           category.length ? (

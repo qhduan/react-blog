@@ -5,22 +5,21 @@ $break-large: 1200px;
 .home {
 
   .scroll {
-    float: left;
-    position: relative;
-    left: -100px;
+    right: 10px;
     font-size: 2em;
     cursor: pointer;
+    position: fixed;
     a {
       display: block;
     }
   }
 
   .scroll-down {
-    margin-top: 5%;
+    top: 60px;
   }
 
   .scroll-up {
-    margin-top: 100%;
+    bottom: 60px;
   }
 
   .category-hint {
