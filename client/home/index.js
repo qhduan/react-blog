@@ -252,12 +252,19 @@ export default class HomePage extends React.Component {
 
                     </Content>
                     <Footer>
-                        <p>
+                        <p
+                            style={{
+                                textAlign: "right",
+                            }}
+                        >
                             {categories.map(item => (
                                 <Link
                                     to={`/category/${item}`}
                                     key={item}
-                                    style={{padding: "10px"}}
+                                    style={{
+                                        padding: "10px",
+                                        paddingRight: "0px",
+                                    }}
                                 >
                                     {item}
                                 </Link>

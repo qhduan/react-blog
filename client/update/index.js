@@ -172,6 +172,18 @@ export default class UpdatePage extends React.Component {
                             />
                     </FormItem>
                     <FormItem
+                        label="category"
+                        {...formItemLayout}
+                    >
+                        <Input
+                            placeholder="分类 选填"
+                            value={category}
+                            onChange={e => this.setState({
+                                category: e.target.value
+                            })}
+                            />
+                    </FormItem>
+                    <FormItem
                         label="类型"
                         {...formItemLayout}
                     >
