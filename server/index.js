@@ -46,7 +46,11 @@ app.use("/upload", upload);
     "/update/:id/",
     "/update/:id",
     "/create/",
-    "/create"
+    "/create",
+    "/update",
+    "/update/",
+    "/update/:id",
+    "/update/:id/",
 ].forEach(element => {
     app.get(element, (req, res, next) => {
         res.sendFile(path.join(__dirname, "..", "public", "index.html"));

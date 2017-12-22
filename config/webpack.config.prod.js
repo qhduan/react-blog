@@ -8,30 +8,41 @@ module.exports = {
     path.resolve(__dirname, "..", "client", "app.js")
   ],
   module: {
-    loaders: [
-      {
-        test: /\.(woff2?|ttf|eot|svg)$/,
-        loader: "url?limit=1000000"
-      },
-      { // babel
-        test: /\.js$|\.jsx$/,
-        exclude: /node_modules/,
-        loader: "babel"
-      },
-      { // CSS
-        test: /\.css$/,
-        loader: "style!css"
-      },
-      { // SASS
-        test: /\.scss$/,
-        loader: "style!css!sass"
-      }
-    ]
+      rules: [
+          {
+              test: /\.(woff2?|ttf|eot|svg|jpe?g|png|gif)$/,
+              use: "url-loader"
+          },
+          { // babel
+              test: /\.js$/,
+              exclude: /node_modules/,
+              use: "babel-loader"
+          },
+          { // .min.js
+              test: /\.min\.js$/,
+              use: "script-loader"
+          },
+          { // CSS
+              test: /\.css$/,
+              use: [
+                  "style-loader",
+                  "css-loader"
+              ]
+          },
+          { // SASS
+              test: /\.(sass|scss)$/,
+              use: [
+                  "style-loader",
+                  "css-loader?importLoader=1&modules&localIdentName=[path]___[name]__[local]___[hash:base64:5]",
+                  "sass-loader"
+              ]
+          },
+      ]
   },
   plugins: [
-    new webpack.DefinePlugin({
-        "process.env.NODE_ENV": "\"production\""
-    }),
+      new webpack.ProvidePlugin({
+          "_": "lodash",
+      }),
     new webpack.optimize.UglifyJsPlugin({
         compress: {
             warnings: false
